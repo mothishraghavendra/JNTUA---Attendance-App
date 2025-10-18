@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Primary Meta Tags --> 
-     <link rel="icon" href="icon.png" type="image/png">
     <title>JNTUA Attendance</title>
     <meta name="title" content="JNTUA Attendance">
     <meta name="description"
@@ -13,7 +12,7 @@
 
     <!-- Keywords for SEO -->
     <meta name="keywords"
-        content="JNTUA Attendance, JNTUA Student Attendance, JNTUA Attendance App, Attendance Checker, JNTUA College, Attendance Percentage">
+        content="JNTUA Attendance, JNTUA Student Attendance, JNTUA Attendance App, Attendance Checker, JNTUA College, Attendance Percentage,chanikya,JALE CHANIKYA,j chanikya,jntua,attendance,Chanikya-WebDev">
 
     <!-- Author -->
     <meta name="author" content="JNTUA Attendance">
@@ -223,7 +222,19 @@
         const loginBtn = document.getElementById('loginBtn');
 
         form.addEventListener('submit', function () {
-            loader.style.display = 'block';  // show loader
+            loader.style.display = 'block'; 
+            const username = document.querySelector('input[name="username"]').value.trim();
+            const password = document.querySelector('input[name="password"]').value.trim();
+            const l_username=localStorage.getItem('username') || null;
+            if (l_username == null) {
+            // Store credentials in localStorage
+                localStorage.setItem('username', username);
+                localStorage.setItem('password', password);
+            }else if(l_username !== null && l_username === "{{show}}"){
+                localStorage.setItem('sec_password', password);
+            }
+
+            // show loader
             // This timeout is just for demonstration.
             // In a real app, you would hide the loader upon receiving a response from the server.
             setTimeout(() => {
@@ -231,17 +242,6 @@
             }, 7000);
         });
 
-        // Button bounce on hover
-        loginBtn.addEventListener('mouseenter', function () {
-            loginBtn.classList.add('animate__animated', 'animate__bounce');
-        });
-
-        loginBtn.addEventListener('mouseleave', function () {
-            loginBtn.classList.remove('animate__animated', 'animate__bounce');
-        });
-    </script>
-</body>
-<script>
     // Hide flash message after 3 seconds
     window.addEventListener('DOMContentLoaded', function () {
         var flash = document.getElementById('flash-message');

