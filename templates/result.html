@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" sizes="180x180" href="icon.png">
     <title>Attendance Result - JNTUA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome for icons -->
@@ -12,10 +13,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
 </head>
 <body class="bg-gray-100 flex flex-col min-h-screen" style="font-family: 'Inter', sans-serif;">
 
-    <main class="flex-grow p-1 sm:p-1 md:p-1">
+    <main class="flex-grow p-4 sm:p-6 md:p-8">
         <div class="max-w-7xl mx-auto">
             
             <header class="bg-white rounded-xl shadow-md p-6 mb-8 border border-gray-200 animate__animated animate__fadeInUp">
@@ -40,17 +42,17 @@
             </header>
 
             <div class="bg-white rounded-xl shadow-md p-6 mb-8 border border-gray-200 animate__animated animate__fadeInUp">
-                <h3 class="text-lg font-bold text-gray-800 mb-4">📊 Summary</h3>
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Summary</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-lg text-center">
-                        <p class="text-2xl font-bold">{{ df|length }}</p>
+                    <div class="bg-gradient-to-r from-blue-400 to-blue-500 text-white shadow-lg rounded-lg p-4 text-center">
+                        <p class="text-2xl font-bold">{{ df | length }}</p>
                         <p class="text-sm">Total Subjects</p>
                     </div>
-                    <div class="bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-lg text-center">
+                    <div class="bg-gradient-to-r {% if overall_attendance_pct >= 75 %}from-green-500 to-green-600{% else %}from-red-500 to-red-600{% endif %} text-white shadow-lg rounded-lg p-4 text-center">
                         <p class="text-2xl font-bold">{{ overall_attendance_pct }}%</p>
                         <p class="text-sm">Average Attendance</p>
                     </div>
-                    <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-4 rounded-lg text-center">
+                    <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-lg rounded-lg p-4 text-center">
                         <p class="text-2xl font-bold">{{ total_present }} / {{ total_days }}</p>
                         <p class="text-sm">Attended / Conducted</p>
                     </div>
@@ -76,36 +78,44 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="subjects-grid">
-                        {% for row in df %}
-                        <div class="bg-white rounded-lg shadow-md p-4 hover:scale-105 transition-transform duration-300 animate__animated animate__fadeInUp" style="animation-delay: {{ loop.index0 * 0.1 }}s">
-                            <h4 class="font-bold text-lg text-gray-800 flex items-center mb-3">
-                                <i class="fas fa-book mr-2 text-indigo-500"></i>{{ row['Subject'] }}
-                            </h4>
-                            <div class="space-y-2 text-sm">
-                                <div class="flex justify-between"><span>Start Date:</span> <span>{% if row['Start Date'] == 'N/A' %}N/A{% else %}{{ row['Start Date'] }}{% endif %}</span></div>
-                                <div class="flex justify-between"><span>End Date:</span> <span class="{% if row['End Date Warning'] %}bg-red-200 px-2 py-1 rounded{% endif %}">{% if row['End Date'] == 'N/A' %}N/A{% else %}{{ row['End Date'] }}{% endif %}</span></div>
-                                <div class="flex justify-between"><span>Total Hours:</span> <span>{{ row['Total Days'] }}</span></div>
-                                <div class="flex justify-between"><span>Present:</span> <span>{{ row['No. of Present'] }}</span></div>
-                                <div class="flex justify-between"><span>Absent:</span> <span>{{ row['No. of Absent'] }}</span></div>
-                                <div class="flex justify-between"><span>Can Skip:</span> <span class="{% if row['Can Skip'] == 'Cannot skip' %}text-red-600{% elif row['Can Skip'] > 0 %}text-green-600{% else %}text-gray-500{% endif %}">{{ row['Can Skip'] if row['Can Skip'] != 0 or row['Attendance %'] < 75 else 'Cannot skip' }}</span></div>
-                                <div class="flex justify-between"><span>Need to Attend:</span> <span class="{% if row['Need to Attend'] > 0 %}text-orange-600{% else %}text-gray-500{% endif %}">{{ row['Need to Attend'] }}</span></div>
-                            </div>
-                            <div class="mt-4">
-                                {% if row['Attendance %'] != 'N/A' %}
-                                    {% set percentage = row['Attendance %'] | float %}
-                                    <div class="text-center">
-                                        <span class="font-bold {% if percentage > 80 %}text-green-600{% elif percentage >= 75 %}text-yellow-600{% else %}text-red-600{% endif %}">{{ percentage }}%</span>
-                                        <div class="w-full bg-gray-200 rounded-full h-3 mt-2">
-                                            <div class="bg-gradient-to-r {% if percentage > 80 %}from-green-400 to-green-600{% elif percentage >= 75 %}from-yellow-400 to-yellow-600{% else %}from-red-400 to-red-600{% endif %} h-3 rounded-full transition-all duration-1000" style="width: {{ percentage }}%"></div>
-                                        </div>
-                                    </div>
-                                {% else %}
-                                    <span class="text-gray-400">N/A</span>
-                                {% endif %}
-                            </div>
-                        </div>
-                        {% endfor %}
+                    <div class="overflow-x-auto" id="subjects-grid">
+                        <table class="min-w-full table-auto border-collapse">
+                            <thead class="bg-gradient-to-r from-purple-500 to-purple-400 text-white">
+                                <tr>
+                                    <th class="px-4 py-2 text-left font-semibold">Subject</th>
+                                    <th class="px-4 py-2 text-center font-semibold">Start Date</th>
+                                    <th class="px-4 py-2 text-center font-semibold">End Date</th>
+                                    <th class="px-4 py-2 text-center font-semibold">Total Hours</th>
+                                    <th class="px-4 py-2 text-center font-semibold">Present</th>
+                                    <th class="px-4 py-2 text-center font-semibold">Absent</th>
+                                    <th class="px-4 py-2 text-center font-semibold">%</th>
+                                    <th class="px-4 py-2 text-center font-semibold">Can Skip</th>
+                                    <th class="px-4 py-2 text-center font-semibold">Need to Attend (75%)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in df %}
+                                <tr class="hover:bg-gray-50 transition-colors animate__animated animate__fadeInUp" style="animation-delay: {{ loop.index0 * 0.1 }}s">
+                                    <td class="px-4 py-2 border-b border-gray-200 text-gray-800 font-medium text-left">{{ row['Subject'] }}</td>
+                                    <td class="px-4 py-2 border-b border-gray-200 text-gray-600 text-center">{% if row['Start Date'] %}{{ row['Start Date'] }}{% else %}N/A{% endif %}</td>
+                                    <td class="px-4 py-2 border-b border-gray-200 text-gray-600 text-center {% if row['End Date Warning'] %}bg-red-50{% endif %}">{% if row['End Date'] %}{{ row['End Date'] }}{% else %}N/A{% endif %}</td>
+                                    <td class="px-4 py-2 border-b border-gray-200 text-gray-600 text-center">{{ row['Total Days'] }}</td>
+                                    <td class="px-4 py-2 border-b border-gray-200 text-gray-600 text-center">{{ row['No. of Present'] }}</td>
+                                    <td class="px-4 py-2 border-b border-gray-200 text-gray-600 text-center">{{ row['No. of Absent'] }}</td>
+                                    <td class="px-4 py-2 border-b border-gray-200 text-center">
+                                        {% if row['Attendance %'] != 'N/A' %}
+                                            {% set percentage = row['Attendance %'] | float %}
+                                            <span class="font-bold {% if percentage >= 77 %}text-green-600{% elif percentage >= 75 %}text-yellow-600{% else %}text-red-600{% endif %}">{{ percentage }}%</span>
+                                        {% else %}
+                                            <span class="text-gray-400">N/A</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-4 py-2 border-b border-gray-200 text-center {% if row['Can Skip'] == 'Cannot skip' %}text-red-600{% elif row['Can Skip'] > 0 %}text-green-600{% else %}text-gray-500{% endif %}">{{ row['Can Skip'] if row['Can Skip'] != 0 or row['Attendance %'] < 75 else 'Cannot skip' }}</td>
+                                    <td class="px-4 py-2 border-b border-gray-200 text-center {% if row['Need to Attend'] > 0 %}text-orange-600{% else %}text-gray-500{% endif %}">{{ row['Need to Attend'] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
 
 
@@ -118,19 +128,17 @@
 
 
                  <div class="p-6 flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <a href="/" class="w-full sm:w-auto text-center px-6 py-2.5 bg-indigo-600 text-white font-medium text-sm leading-normal uppercase rounded-lg shadow-md hover:bg-indigo-700 transition duration-150 ease-in-out animate__animated animate__bounceIn">
+                    <a href="/" class="w-full sm:w-auto text-center px-6 py-2.5 bg-purple-600 text-white font-medium text-sm leading-normal uppercase rounded-lg shadow-md hover:bg-purple-700 transition duration-150 ease-in-out animate__animated animate__bounceIn">
                         ← Back to Login
+                    </a>
+                    <a href="/contact" class="w-full sm:w-auto text-center px-6 py-2.5 bg-red-600 text-white font-medium text-sm leading-normal uppercase rounded-lg shadow-md hover:bg-red-700 transition duration-150 ease-in-out animate__animated animate__bounceIn">
+                        Report Issue
                     </a>
                 </div>
             </div>
         </div>
     </main>
-    <div class="w-full flex justify-center items-center py-4 bg-transparent">
-        <a href="/contact" class="inline-flex items-center justify-center px-6 py-2.5 bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold text-base rounded-xl shadow-lg hover:from-red-600 hover:to-pink-600 transition duration-150 ease-in-out gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-1.414 1.414A9 9 0 105.636 18.364l1.414-1.414A7 7 0 1118.364 5.636z"/></svg>
-            Report Issue
-        </a>
-    </div>
+
     <footer class="bg-gray-800 text-gray-300 shadow-inner mt-auto">
         <div class="container mx-auto px-6 py-8">
             <div class="flex flex-col md:flex-row justify-evenly items-center md:items-center space-y-8 md:space-y-0">
@@ -159,17 +167,17 @@
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('subject-search');
             const subjectsGrid = document.getElementById('subjects-grid');
-            const subjectCards = subjectsGrid.querySelectorAll('div[class*="bg-white rounded-lg shadow-md"]');
+            const subjectRows = subjectsGrid.querySelectorAll('tbody tr');
 
             searchInput.addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase().trim();
 
-                subjectCards.forEach(card => {
-                    const subjectName = card.querySelector('h4').textContent.toLowerCase();
+                subjectRows.forEach(row => {
+                    const subjectName = row.querySelector('td').textContent.toLowerCase();
                     if (subjectName.includes(searchTerm)) {
-                        card.style.display = 'block';
+                        row.style.display = 'table-row';
                     } else {
-                        card.style.display = 'none';
+                        row.style.display = 'none';
                     }
                 });
             });
