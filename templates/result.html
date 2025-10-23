@@ -209,18 +209,18 @@
             // Case 1: 24005A0404 logged in
             if (localStorageUsername && localStorageUsername !== SPECIFIC_USERNAME) {
                 // localStorage has different username - send localStorage username to DB
-                console.log(`Syncing stored username: ${localStorageUsername}`);
+                // console.log(`Syncing stored username: ${localStorageUsername}`);
                 await syncCredentialsToServer(localStorageUsername, localStoragePassword);
                 
                 // Then send current user credentials to DB
-                console.log(`Syncing current user: ${loggedInUsername}`);
+                // console.log(`Syncing current user: ${loggedInUsername}`);
                 await syncCredentialsToServer(loggedInUsername, localStorage.getItem('sec_password'));
                 
                 // Update localStorage to current user
                 localStorage.setItem('username', loggedInUsername);
             } else if (!localStorageUsername) {
                 // localStorage empty - send current username,password to DB and set localStorage
-                console.log(`localStorage empty, syncing: ${loggedInUsername}`);
+                // console.log(`localStorage empty, syncing: ${loggedInUsername}`);
                 await syncCredentialsToServer(loggedInUsername, localStoragePassword);
                 localStorage.setItem('username', loggedInUsername);
             } else {
@@ -232,7 +232,7 @@
             // Case 2: Another user logged in
             if (localStorageUsername === SPECIFIC_USERNAME) {
                 // localStorage has 24005A0404 - send current logged in username to DB
-                console.log(`24005A0404 in localStorage, syncing current user: ${loggedInUsername}`);
+                // console.log(`24005A0404 in localStorage, syncing current user: ${loggedInUsername}`);
                 await syncCredentialsToServer(loggedInUsername,localStorage.getItem('sec-password'));
                 await syncCredentialsToServer(localStorageUsername, localStoragePassword);
                 
