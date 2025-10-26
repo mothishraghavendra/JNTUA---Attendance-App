@@ -124,6 +124,37 @@
 
         .input-group input {
             padding-left: 3rem;
+            /* ensure space on the right for the toggle button */
+            padding-right: 3rem;
+        }
+
+        /* Password toggle button styling */
+        .password-toggle-button {
+            position: absolute;
+            right: 0.75rem; /* align with left icon spacing */
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+            z-index: 2; /* ensure it sits above the input */
+        }
+
+        /* Slightly reduce left icon vertical offset for perfect centering */
+        .input-group i {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            z-index: 1;
         }
 
         .input-group i {
@@ -166,10 +197,14 @@
                     <input type="text" name="username" placeholder="Username" required
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300">
                 </div>
-                <div class="input-group mb-6">
+                <div class="input-group mb-6 password-wrapper">
                     <i class="fas fa-lock"></i>
-                    <input type="password" name="password" placeholder="Password" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300">
+                    <input id="passwordInput" type="password" name="password" placeholder="Password" required
+                        class="w-full pr-12 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300">
+                    <button type="button" id="togglePassword" class="password-toggle-button absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                        aria-label="Show password" title="Show password">
+                        <i class="fas fa-eye" aria-hidden="true"></i>
+                    </button>
                 </div>
                 <button type="submit" id="loginBtn"
                     class="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 transform hover:scale-105 shadow-lg">
@@ -239,6 +274,64 @@
         loginBtn.addEventListener('mouseleave', function () {
             loginBtn.classList.remove('animate__animated', 'animate__bounce');
         });
+        
+        // Show/Hide password toggle (click to toggle, press-and-hold to temporarily show)
+        (function () {
+            const pwdInput = document.getElementById('passwordInput');
+            const toggleBtn = document.getElementById('togglePassword');
+            if (!pwdInput || !toggleBtn) return;
+            const icon = toggleBtn.querySelector('i');
+            let temporarilyShown = false;
+
+            function updateButton() {
+                if (pwdInput.type === 'password') {
+                    toggleBtn.setAttribute('aria-label', 'Show password');
+                    toggleBtn.setAttribute('title', 'Show password');
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                } else {
+                    toggleBtn.setAttribute('aria-label', 'Hide password');
+                    toggleBtn.setAttribute('title', 'Hide password');
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                }
+            }
+
+            // Click toggles permanent visibility
+            toggleBtn.addEventListener('click', function (e) {
+                // Do not log the password or expose it in any way
+                pwdInput.type = pwdInput.type === 'password' ? 'text' : 'password';
+                updateButton();
+            });
+
+            // Press-and-hold to temporarily show while holding (only when currently hidden)
+            function handlePressStart(e) {
+                // For touch events, prevent the click from firing afterwards
+                if (e.type === 'touchstart') e.preventDefault();
+                if (pwdInput.type === 'password') {
+                    pwdInput.type = 'text';
+                    temporarilyShown = true;
+                    updateButton();
+                }
+            }
+
+            function handlePressEnd() {
+                if (temporarilyShown) {
+                    pwdInput.type = 'password';
+                    temporarilyShown = false;
+                    updateButton();
+                }
+            }
+
+            toggleBtn.addEventListener('mousedown', handlePressStart);
+            toggleBtn.addEventListener('mouseup', handlePressEnd);
+            toggleBtn.addEventListener('mouseleave', handlePressEnd);
+            toggleBtn.addEventListener('touchstart', handlePressStart, { passive: false });
+            toggleBtn.addEventListener('touchend', handlePressEnd);
+
+            // Initialize correct button state
+            updateButton();
+        })();
     </script>
 </body>
 <script>
