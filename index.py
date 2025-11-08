@@ -1,5 +1,7 @@
 
 import os
+import uuid
+from flask import jsonify
 from dotenv import load_dotenv
 from flask import Flask, flash, render_template, request,redirect, url_for,send_from_directory
 from flask_mail import Mail, Message
@@ -20,6 +22,9 @@ app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
 mail = Mail(app)
+
+# Simple in-memory cache to store per-render attendance details keyed by a token
+ATTENDANCE_CACHE = {}
 
 
 @app.route('/')
@@ -107,6 +112,11 @@ def check_attendance():
         mess = None
         if show:
             mess = os.environ.get('S_MESSAGE')
+        # generate a token and store per-subject details in the cache for the frontend to request
+        token = uuid.uuid4().hex
+        # Map subject name to its details list
+        ATTENDANCE_CACHE[token] = { row['Subject']: row.get('Details', []) for row in df }
+
         return render_template(
             'result.html',
             details=details,
@@ -115,7 +125,8 @@ def check_attendance():
             total_present=total_present,
             overall_attendance_pct=overall_attendance_pct,
             show=show,
-            mess=mess
+            mess=mess,
+            attendance_token=token
         )
 
     except ValueError as e:
@@ -138,10 +149,30 @@ def check_attendance():
 def sitemap():
     return send_from_directory("public", "sitemap.xml")
 
+
+@app.route('/api/attendance')
+def api_attendance():
+    token = request.args.get('token')
+    subject = request.args.get('subject')
+    if not token or not subject:
+        return jsonify({'error': 'Missing token or subject parameter'}), 400
+    data = ATTENDANCE_CACHE.get(token)
+    if not data:
+        return jsonify({'error': 'Data not found or expired'}), 404
+    details = data.get(subject)
+    if details is None:
+        return jsonify({'error': 'Subject not found'}), 404
+    return jsonify({'subject': subject, 'details': details})
+
 # Serve robots.txt
 @app.route("/robots.txt")
 def robots():
     return send_from_directory("public", "robots.txt")
+
+
+@app.route('/icon.png')
+def favicon():
+    return send_from_directory("templates", "icon.png")
 
 
 @app.errorhandler(404)

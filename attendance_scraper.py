@@ -90,11 +90,16 @@ def fetch_single_attendance(session: requests.Session, att_payload: dict) -> dic
             records.append((cols[0].get_text(strip=True), cols[2].get_text(strip=True)))
 
         dates, statuses = [], []
+        details_list = []
         for date_str, status in records:
             try:
                 date_obj = datetime.strptime(date_str, "%d-%m-%Y")
                 dates.append(date_obj)
                 statuses.append(status)
+                details_list.append({
+                    "date": date_obj.strftime("%d-%m-%Y"),
+                    "status": status
+                })
             except ValueError:
                 continue
 
@@ -123,6 +128,8 @@ def fetch_single_attendance(session: requests.Session, att_payload: dict) -> dic
             "Attendance %": attendance_pct if dates else 0,
             "End Date Warning": end_date_warning
         }
+        # include per-date details for this subject
+        summary["Details"] = details_list
     else:
         # If table not found, store None/0 values
         summary = {
@@ -133,7 +140,8 @@ def fetch_single_attendance(session: requests.Session, att_payload: dict) -> dic
             "No. of Present": 0,
             "No. of Absent": 0,
             "Attendance %": 0,
-            "End Date Warning": False
+            "End Date Warning": False,
+            "Details": []
         }
 
     return summary
