@@ -5,77 +5,139 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <link rel="icon" sizes="180x180" href="icon.png">
     <title>Report Issue - JNTUA Attendance</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/output.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        @keyframes slideInFromTop {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes slideInFromLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        .form-field {
+            animation: slideInFromLeft 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        .form-field:nth-child(1) { animation-delay: 0.1s; }
+        .form-field:nth-child(2) { animation-delay: 0.2s; }
+        .form-field:nth-child(3) { animation-delay: 0.3s; }
+        .form-field:nth-child(4) { animation-delay: 0.4s; }
+        .form-field:nth-child(5) { animation-delay: 0.5s; }
+        
+        input:focus, textarea:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(147, 51, 234, 0.15);
+        }
+        
+        label {
+            transition: color 0.3s ease;
+        }
+        
+        input:focus + label,
+        textarea:focus + label,
+        .form-field:focus-within label {
+            color: #9333ea;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 flex flex-col min-h-screen" style="font-family: 'Inter', sans-serif;">
+<body class="bg-gray-50 flex flex-col min-h-screen" style="font-family: 'Inter', sans-serif;">
 
-    <main class="flex-grow p-4">
-        <div class="max-w-2xl mx-auto">
-            <div class="bg-white rounded-xl shadow-md p-8 border border-gray-200">
-                <div class="text-center mb-8">
-                    <h1 class="text-3xl font-bold text-gray-800 mb-2">Report an Issue</h1>
-                    <p class="text-gray-600">Help us improve by reporting any problems you encountered.</p>
+    <main class="flex-grow p-4 sm:p-6 md:p-8">
+        <div class="max-w-3xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-lg p-6 sm:p-8 md:p-10 border border-gray-100 animate__animated animate__fadeInUp">
+                <div class="text-center mb-8 animate__animated animate__fadeInDown">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4 transform hover:scale-110 transition-transform duration-300 animate__animated animate__bounceIn">
+                        <i class="fas fa-exclamation-triangle text-2xl text-red-600"></i>
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Report an Issue</h1>
+                    <p class="text-sm sm:text-base text-gray-600">Help us improve by reporting any problems you encountered</p>
                 </div>
 
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
                         {% for category, message in messages %}
-                            <div class="mb-4 p-4 rounded-lg {% if category == 'error' %}bg-red-50 border border-red-200 text-red-800{% else %}bg-green-50 border border-green-200 text-green-800{% endif %}">
-                                <i class="fas {% if category == 'error' %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %} mr-2"></i>
-                                {{ message }}
+                            <div class="mb-6 p-4 rounded-lg flex items-center gap-3 animate__animated animate__slideInDown {% if category == 'error' %}bg-red-50 border-l-4 border-red-500 text-red-800{% else %}bg-green-50 border-l-4 border-green-500 text-green-800{% endif %}">
+                                <i class="fas {% if category == 'error' %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %} text-lg flex-shrink-0 animate-pulse"></i>
+                                <span class="text-sm sm:text-base font-medium">{{ message }}</span>
                             </div>
                         {% endfor %}
                     {% endif %}
                 {% endwith %}
 
-                <form method="POST" enctype="multipart/form-data" class="space-y-6">
-                    <div>
-                        <label for="admission" class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-id-card mr-2"></i>Admission Number
+                <form method="POST" action="/contact" enctype="multipart/form-data" class="space-y-5 sm:space-y-6" id="contactForm">
+                    <div class="form-field">
+                        <label for="admission" class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200">
+                            Admission Number <span class="text-red-500">*</span>
                         </label>
                         <input type="text" id="admission" name="admission" required
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                               class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 text-sm sm:text-base bg-white hover:border-gray-400"
                                placeholder="Enter your admission number">
                     </div>
 
-                    <div>
-                        <label for="user_email" class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-envelope mr-2"></i>Your Email
+                    <div class="form-field">
+                        <label for="user_email" class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200">
+                            Your Email <span class="text-red-500">*</span>
                         </label>
                         <input type="email" id="user_email" name="user_email" required
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                               class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 text-sm sm:text-base bg-white hover:border-gray-400"
                                placeholder="Enter your email address">
                     </div>
 
-                    <div>
-                        <label for="message" class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-comment mr-2"></i>Issue Description
+                    <div class="form-field">
+                        <label for="message" class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200">
+                            Issue Description <span class="text-red-500">*</span>
                         </label>
                         <textarea id="message" name="message" rows="5" required
-                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors resize-vertical"
+                                  class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 resize-vertical text-sm sm:text-base bg-white hover:border-gray-400"
                                   placeholder="Describe the issue you encountered..."></textarea>
                     </div>
 
-                    <div>
-                        <label for="screenshot" class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-image mr-2"></i>Screenshot (Optional)
+                    <div class="form-field">
+                        <label for="screenshot" class="block text-sm font-semibold text-gray-700 mb-2 transition-colors duration-200">
+                            Screenshot (Optional)
                         </label>
                         <input type="file" id="screenshot" name="screenshot" accept="image/*"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                        <p class="text-sm text-gray-500 mt-1">Upload a screenshot to help us understand the issue better.</p>
+                               class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 text-sm sm:text-base bg-white hover:border-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 file:transition-colors file:duration-200 cursor-pointer">
+                        <p class="text-xs sm:text-sm text-gray-500 mt-2 flex items-center gap-1">
+                            <i class="fas fa-info-circle text-purple-500"></i>
+                            Upload a screenshot to help us understand the issue better.
+                        </p>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                        <button type="submit" class="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-indigo-700 transition-colors focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                            <i class="fas fa-paper-plane mr-2"></i>Submit Issue
+                    <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 pt-6 border-t-2 border-gray-200 form-field">
+                        <button type="submit" class="group flex-1 bg-purple-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-purple-700 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-xl text-sm sm:text-base transform hover:scale-105 hover:-translate-y-1 relative overflow-hidden">
+                            <span class="relative z-10 flex items-center justify-center">
+                                <i class="fas fa-paper-plane mr-2 transition-transform duration-300 group-hover:translate-x-1"></i>Submit Issue
+                            </span>
                         </button>
-                        <button type="button" onclick="history.back()" class="flex-1 bg-gray-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-gray-700 transition-colors focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
-                            <i class="fas fa-arrow-left mr-2"></i>Back to Results
+                        <button type="button" onclick="history.back()" class="group flex-1 bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-300 shadow-md hover:shadow-xl text-sm sm:text-base transform hover:scale-105 hover:-translate-y-1">
+                            <i class="fas fa-arrow-left mr-2 transition-transform duration-300 group-hover:-translate-x-1"></i>Back
                         </button>
                     </div>
                 </form>
@@ -90,6 +152,65 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add smooth focus animations
+            const inputs = document.querySelectorAll('input, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('focused');
+                });
+                input.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('focused');
+                });
+            });
+
+            // Form submission animation
+            const form = document.getElementById('contactForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
+                        submitBtn.disabled = true;
+                        submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+                    }
+                });
+            }
+
+            // Add validation feedback
+            inputs.forEach(input => {
+                input.addEventListener('invalid', function(e) {
+                    e.preventDefault();
+                    this.classList.add('border-red-500', 'shake');
+                    setTimeout(() => {
+                        this.classList.remove('shake');
+                    }, 500);
+                });
+
+                input.addEventListener('input', function() {
+                    if (this.validity.valid) {
+                        this.classList.remove('border-red-500');
+                        this.classList.add('border-green-500');
+                        setTimeout(() => {
+                            this.classList.remove('border-green-500');
+                        }, 2000);
+                    }
+                });
+            });
+        });
+    </script>
+    <style>
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+    </style>
 
 </body>
 </html>

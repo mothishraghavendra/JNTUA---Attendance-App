@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" sizes="180x180" href="icon.png">
+    <title>Contributors - JNTUA Attendance</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/output.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex flex-col min-h-screen" style="font-family: 'Inter', sans-serif;">
+
+    <main class="flex-grow p-4 sm:p-6 md:p-8 lg:p-10">
+        <div class="max-w-7xl mx-auto space-y-6 sm:space-y-8">
+            
+            <!-- Back Button -->
+            <div class="mb-4">
+                <button onclick="history.back()" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium text-sm transition-colors">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Home</span>
+                </button>
+            </div>
+
+            <!-- Header -->
+            <header class="bg-white rounded-xl shadow-md p-5 sm:p-6 md:p-8 border border-gray-200 animate__animated animate__fadeInUp">
+                <div class="text-center">
+                    <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-purple-600 rounded-full mb-4">
+                        <i class="fas fa-users text-white text-2xl sm:text-3xl"></i>
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">Contributors</h1>
+                    <p class="text-sm sm:text-base text-gray-600">Meet the team behind the JNTUA Attendance App</p>
+                </div>
+            </header>
+
+            <!-- Contributors Grid -->
+            <div class="flex flex-col sm:flex-row flex-wrap justify-center gap-4 sm:gap-6 md:gap-8">
+                <!-- Contributor Card 1 - Chanikya WebDev -->
+                <div class="bg-white rounded-xl shadow-md p-4 sm:p-5 md:p-6 lg:p-8 border border-gray-200 animate__animated animate__fadeInUp w-full sm:w-auto sm:flex-1 sm:max-w-sm lg:max-w-xs">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 bg-purple-600 rounded-full flex items-center justify-center text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold shadow-md mb-3 sm:mb-4">
+                            CJ
+                        </div>
+                        <h3 class="text-base sm:text-lg md:text-xl font-bold text-gray-900 mb-1 sm:mb-2 break-words">Chanikya J</h3>
+                        <p class="text-xs sm:text-sm font-semibold text-purple-600 mb-3 sm:mb-4">Project Creator</p>
+                    </div>
+                </div>
+
+                <!-- Contributor Card 2 - Suram Sathwik Reddy -->
+                <div class="bg-white rounded-xl shadow-md p-4 sm:p-5 md:p-6 lg:p-8 border border-gray-200 animate__animated animate__fadeInUp w-full sm:w-auto sm:flex-1 sm:max-w-sm lg:max-w-xs">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 bg-purple-600 rounded-full flex items-center justify-center text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold shadow-md mb-3 sm:mb-4">
+                            SSR
+                        </div>
+                        <h3 class="text-base sm:text-lg md:text-xl font-bold text-gray-900 mb-1 sm:mb-2 break-words">Suram Sathwik</h3>
+                        <p class="text-xs sm:text-sm font-semibold text-purple-600 mb-3 sm:mb-4">contributer</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div class="bg-white rounded-xl shadow-md p-4 sm:p-5 md:p-6 lg:p-8 border border-gray-200 animate__animated animate__fadeInUp">
+                <div class="text-center">
+                    <h2 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 mb-2 sm:mb-3">Want to Contribute?</h2>
+                    <p class="text-xs sm:text-sm md:text-base text-gray-600 mb-4 sm:mb-6 max-w-2xl mx-auto px-2">
+                        We welcome contributions! Whether it's fixing bugs, adding features, or improving documentation, 
+                        every contribution makes a difference.
+                    </p>
+                    <a href="https://github.com/Chanikya-WebDev/JNTUA---Attendance-app" target="_blank" rel="noopener noreferrer"
+                       class="inline-flex items-center justify-center px-4 sm:px-6 py-2 sm:py-2.5 bg-purple-600 text-white font-medium text-xs sm:text-sm rounded-lg shadow-md hover:bg-purple-700 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition duration-150 ease-in-out">
+                        <i class="fab fa-github mr-2"></i>View on GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-gray-300 shadow-inner mt-auto">
+        <div class="container mx-auto px-6 py-8">
+            <div class="text-center text-sm">
+                <p>&copy; 2025 JNTUA Attendance App. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

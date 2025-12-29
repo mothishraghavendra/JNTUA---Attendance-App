@@ -1,253 +1,971 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Primary Meta Tags --> 
-     <link rel="icon" href="icon.png" type="image/png">
+    <link rel="icon" href="icon.png" type="image/png">
     <title>JNTUA Attendance</title>
-    <meta name="title" content="JNTUA Attendance">
-    <meta name="description"
-        content="Check your JNTUA student attendance online easily with the JNTUA Attendance App. View subject-wise attendance percentage, total classes, and attendance details.">
 
-    <!-- Keywords for SEO -->
-    <meta name="keywords"
-        content="JNTUA Attendance, JNTUA Student Attendance, JNTUA Attendance App, Attendance Checker, JNTUA College, Attendance Percentage">
-
-    <!-- Author -->
-    <meta name="author" content="JNTUA Attendance">
-
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://jntua-attendance-app.vercel.app/">
-    <meta property="og:title" content="JNTUA Attendance">
-    <meta property="og:description"
-        content="Check your JNTUA student attendance online easily with the JNTUA Attendance App.">
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://jntua-attendance-app.vercel.app/">
-    <meta property="twitter:title" content="JNTUA Attendance">
-    <meta property="twitter:description"
-        content="Check your JNTUA student attendance online easily with the JNTUA Attendance App.">
-
-
-    <!-- Tailwind CSS for styling -->
-    <script src="https://cdn-tailwindcss.vercel.app/"></script>
-    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/output.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Animate.css for animations -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/jpg" href="images (1).jpg">
-    <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "JNTUA Attendance",
-  "url": "https://jntua-attendance-app.vercel.app/",
-  "description": "A student-friendly web application that fetches and displays real-time attendance data for JNTUA students.",
-  "applicationCategory": "EducationalApplication",
-  "operatingSystem": "Web",
-  "creator": {
-    "@type": "Person",
-    "name": "Chanikya",
-    "url": "https://github.com/Chanikya-WebDev"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "JNTUA Attendance Team",
-    "url": "https://jntua-attendance-app.vercel.app/"
-  },
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "INR"
-  },
-  "inLanguage": "en-IN",
-  "softwareVersion": "1.0.0",
-  "datePublished": "2025-09-20",
-  "image": "https://jntua-attendance-app.vercel.app/assets/og-image.png",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://jntua-attendance-app.vercel.app/?query={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
-}
-</script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* Use the Inter font family for a modern look */
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #8b5cf6;
+            --accent: #a855f7;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-        }
-
-        /* Animated background */
-        main {
-            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Custom Loader CSS */
-        #loader {
-            display: none;
-            border: 6px solid #f3f3f3;
-            border-top: 6px solid #3b82f6;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto 0;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Input styling */
-        .input-group {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: linear-gradient(135deg, #56b8e8 0%, #4a9fd8 50%, #3d8bc8 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--gray-800);
+            display: flex;
+            flex-direction: column;
             position: relative;
+            overflow-x: hidden;
         }
 
-        .input-group input {
-            padding-left: 3rem;
-            /* ensure space on the right for the toggle button */
-            padding-right: 3rem;
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
         }
 
-        /* Password toggle button styling */
-        .password-toggle-button {
-            position: absolute;
-            right: 0.75rem; /* align with left icon spacing */
-            top: 50%;
-            transform: translateY(-50%);
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.03) 4px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            width: 100%;
+        }
+
+        /* Header Styles */
+        .header {
+            padding: 0;
+            text-align: center;
+            background: transparent;
+            animation: fadeInDown 0.8s ease-out;
+            position: relative;
+            z-index: 1;
+            border-bottom: 1px solid var(--gray-200);
+            margin-bottom: 2.5rem;
+            padding-bottom: 2rem;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 2.5rem;
-            height: 2.5rem;
-            background: transparent;
-            border: none;
-            padding: 0;
-            margin: 0;
-            cursor: pointer;
-            z-index: 2; /* ensure it sits above the input */
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            position: relative;
         }
 
-        /* Slightly reduce left icon vertical offset for perfect centering */
-        .input-group i {
-            position: absolute;
-            left: 0.75rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #9ca3af;
+        .logo-icon {
+            color: #56b8e8;
+            font-size: 2.5rem;
+            filter: drop-shadow(0 4px 12px rgba(86, 184, 232, 0.3));
+            animation: iconFloat 3s ease-in-out infinite;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .logo-icon:hover {
+            transform: scale(1.15) translateY(-3px);
+            filter: drop-shadow(0 8px 16px rgba(86, 184, 232, 0.5));
+            animation: iconFloat 1.5s ease-in-out infinite, iconPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { filter: drop-shadow(0 4px 8px rgba(86, 184, 232, 0.3)); }
+            50% { filter: drop-shadow(0 8px 20px rgba(86, 184, 232, 0.6)); }
+        }
+
+        .logo-text {
+            font-size: 1.875rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #56b8e8 0%, #4a9fd8 50%, #3d8bc8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textGlow 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        @keyframes textGlow {
+            0%, 100% { opacity: 1; filter: brightness(1); }
+            50% { opacity: 1; filter: brightness(1.1); }
+        }
+
+        .subtitle {
+            color: var(--gray-600);
+            font-size: 1rem;
+            font-weight: 500;
+            margin: 0;
+            animation: fadeInUp 1s ease-out 0.2s both;
+            letter-spacing: 0.01em;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            padding: 4rem 1rem;
+            min-height: calc(100vh - 250px);
+            position: relative;
             z-index: 1;
         }
 
-        .input-group i {
+        /* Floating decorative elements */
+        .floating-shape {
+            position: fixed;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+            z-index: 0;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .floating-shape:nth-child(1) {
+            width: 200px;
+            height: 200px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-shape:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 5s;
+        }
+
+        .floating-shape:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.3;
+            }
+            33% {
+                transform: translate(30px, -30px) scale(1.1);
+                opacity: 0.4;
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+                opacity: 0.35;
+            }
+        }
+
+        .content-wrapper {
+            width: 100%;
+            max-width: 440px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        /* Login Card */
+        .login-card {
+            width: 100%;
+            max-width: 460px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border-radius: 2rem;
+            box-shadow: 
+                0 25px 80px rgba(0, 0, 0, 0.2),
+                0 10px 30px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 3rem 2.5rem;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: cardSlideIn 0.8s ease-out 0.3s both;
+        }
+
+        @keyframes cardSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .login-card::before {
+            content: '';
             position: absolute;
-            left: 0.75rem;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #56b8e8, #4a9fd8, #3d8bc8, #56b8e8);
+            background-size: 300% 100%;
+            animation: gradientBorder 4s linear infinite;
+            border-radius: 2rem 2rem 0 0;
+        }
+
+        @keyframes gradientBorder {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        .login-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .login-card:hover {
+            transform: translateY(-10px) scale(1.01);
+            box-shadow: 
+                0 35px 100px rgba(0, 0, 0, 0.25),
+                0 15px 40px rgba(0, 0, 0, 0.15),
+                0 0 0 1px rgba(255, 255, 255, 0.6),
+                0 0 60px rgba(86, 184, 232, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        .login-card:hover::after {
+            opacity: 1;
+        }
+
+        .card-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+            text-align: center;
+            letter-spacing: -0.03em;
+            animation: titleFadeIn 0.8s ease-out 0.5s both;
+            position: relative;
+            line-height: 1.2;
+        }
+
+        @keyframes titleFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-subtitle {
+            color: var(--gray-600);
+            text-align: center;
+            margin-bottom: 2.5rem;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            animation: subtitleFadeIn 0.8s ease-out 0.6s both;
+        }
+
+        @keyframes subtitleFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+            animation: formGroupFadeIn 0.6s ease-out both;
+        }
+
+        .form-group:last-of-type {
+            margin-bottom: 2rem;
+        }
+
+        .form-group:nth-child(1) {
+            animation-delay: 0.7s;
+        }
+
+        .form-group:nth-child(2) {
+            animation-delay: 0.8s;
+        }
+
+        @keyframes formGroupFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.625rem;
+            letter-spacing: 0.01em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .form-group:focus-within .form-label {
+            color: #56b8e8;
+            transform: translateX(2px);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1.125rem;
             top: 50%;
             transform: translateY(-50%);
-            color: #9ca3af;
+            color: var(--gray-500);
+            pointer-events: none;
+            transition: all 0.3s ease;
+            font-size: 1.125rem;
+            width: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1.125rem 1rem 1.125rem 3.25rem;
+            font-size: 0.9375rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--gray-800);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .form-input::placeholder {
+            color: var(--gray-400);
+            font-weight: 400;
+            transition: opacity 0.3s ease;
+        }
+
+        .form-input:hover:not(:focus) {
+            border-color: var(--gray-300);
+            background: var(--gray-50);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #56b8e8;
+            background: white;
+            box-shadow: 
+                0 0 0 4px rgba(86, 184, 232, 0.12),
+                0 6px 20px rgba(86, 184, 232, 0.15),
+                0 2px 8px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .form-input:focus::placeholder {
+            opacity: 0.5;
+        }
+
+        .input-wrapper:has(.form-input:focus) .input-icon {
+            color: #56b8e8;
+            transform: translateY(-50%) scale(1.15);
+            filter: drop-shadow(0 2px 4px rgba(86, 184, 232, 0.3));
+        }
+
+        .input-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #56b8e8, #4a9fd8, transparent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 0;
+            border-radius: 2px;
+        }
+
+        .input-wrapper:has(.form-input:focus)::before {
+            transform: scaleX(1);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray-500);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .password-toggle:hover {
+            color: #56b8e8;
+            background: rgba(86, 184, 232, 0.1);
+            transform: translateY(-50%) scale(1.15);
+        }
+
+        .password-toggle:active {
+            transform: translateY(-50%) scale(0.9);
+        }
+
+        .password-toggle i {
+            transition: transform 0.3s ease;
+        }
+
+        .password-toggle:hover i {
+            transform: scale(1.2);
+        }
+
+        /* Button Styles */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 1.125rem 1.75rem;
+            font-size: 1.0625rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(135deg, #56b8e8 0%, #4a9fd8 50%, #3d8bc8 100%);
+            background-size: 200% 200%;
+            color: white;
+            box-shadow: 
+                0 8px 20px rgba(86, 184, 232, 0.4),
+                0 4px 10px rgba(86, 184, 232, 0.3),
+                0 2px 4px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            animation: buttonFadeIn 0.8s ease-out 0.9s both;
+            letter-spacing: 0.01em;
+        }
+
+        @keyframes buttonFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .btn:hover:not(:disabled)::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover:not(:disabled) {
+            background-position: right center;
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 
+                0 15px 40px rgba(86, 184, 232, 0.5),
+                0 8px 20px rgba(86, 184, 232, 0.4),
+                0 4px 8px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .btn:hover:not(:disabled) .fa-arrow-right {
+            transform: translateX(4px);
+        }
+
+        .btn:active:not(:disabled) {
+            transform: translateY(-1px) scale(0.98);
+            box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn .fa-arrow-right {
+            transition: transform 0.3s ease;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: 0.875rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.875rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            animation: slideDown 0.5s cubic-bezier(0.4, 0, 0.2, 1), shake 0.5s ease 0.3s;
+            border: 1px solid;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .alert::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border-color: #fecaca;
+            color: #991b1b;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-color: #bbf7d0;
+            color: #166534;
+        }
+
+        .alert-icon {
+            font-size: 1.125rem;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+
+        /* Loader */
+        .loader {
+            display: none;
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+            color: white;
+            padding: 3.5rem 0 2.5rem;
+            margin-top: auto;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+            animation: footerFadeIn 1s ease-out 1s both;
+        }
+
+        @keyframes footerFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .footer-content {
+            text-align: center;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .footer-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .footer-text {
+            color: var(--gray-300);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+            font-size: 0.9375rem;
+        }
+
+        .github-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.9375rem 1.75rem;
+            background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 0.875rem;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .github-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .github-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .github-btn:hover {
+            background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+
+        .github-btn:hover .fab {
+            transform: rotate(360deg) scale(1.2);
+        }
+
+        .github-btn .fab {
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .footer-bottom {
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(75, 85, 99, 0.5);
+            color: var(--gray-400);
+            font-size: 0.875rem;
+        }
+
+        /* Enhanced focus visible for accessibility */
+        *:focus-visible {
+            outline: 2px solid #56b8e8;
+            outline-offset: 2px;
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .login-card {
+                padding: 2.75rem 2rem;
+                border-radius: 1.5rem;
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 0;
+                margin-bottom: 2rem;
+                padding-bottom: 1.5rem;
+            }
+            
+            .logo-text {
+                font-size: 1.625rem;
+            }
+
+            .logo-icon {
+                font-size: 2.25rem;
+            }
+
+            .main-content {
+                padding: 2.5rem 1rem;
+            }
+
+            .footer {
+                padding: 2.5rem 0 2rem;
+            }
+
+            .floating-shape {
+                display: none;
+            }
         }
     </style>
 </head>
 
-<body class="bg-gray-100 flex flex-col min-h-screen animate__animated animate__fadeIn">
+<body class="flex flex-col min-h-screen">
+    <div class="floating-shape"></div>
+    <div class="floating-shape"></div>
+    <div class="floating-shape"></div>
+    <main class="main-content">
+        <div class="content-wrapper">
+            <div class="login-card">
+                <header class="header">
+                    <div class="logo">
+                        <i class="fas fa-graduation-cap logo-icon"></i>
+                        <span class="logo-text" >JNTUA Attendance</span>
+                    </div>
+                    <p class="subtitle">Secure access to your attendance records</p>
+                </header>
 
-    <!-- Main Content Area -->
-    <main class="flex-grow flex items-center justify-center p-4 bg-gradient-to-br from-sky-400 to-indigo-500">
-        <div class="container bg-white w-full max-w-md p-8 sm:p-10 rounded-2xl shadow-2xl text-center animate__animated animate__zoomIn animate__delay-1s">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            {% for category, message in messages %}
-            <div id="flash-message"
-                class="mb-4 p-3 bg-green-100 border-l-4 border-green-500 text-green-800 rounded-lg text-center font-semibold flex items-center justify-center gap-2">
-                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" stroke-width="2"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-                {{ message }}
-            </div>
-            {% endfor %}
-            {% endif %}
-            {% endwith %}
-            <div class="mb-6">
-                <i class="fas fa-graduation-cap text-6xl text-indigo-600 mb-4"></i>
-                <h1 class="text-3xl font-bold text-gray-800">JNTUA Attendance Tracker</h1>
-                <p class="text-gray-600 mt-2">Access your attendance data securely</p>
-            </div>
-            <form id="loginForm" action="/check" method="POST">
-                <div class="input-group mb-4">
-                    <i class="fas fa-user"></i>
-                    <input type="text" name="username" placeholder="Username" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ 'error' if category == 'error' else 'success' }}">
+                    <i class="fas fa-{{ 'exclamation-circle' if category == 'error' else 'check-circle' }} alert-icon"></i>
+                    <span>{{ message }}</span>
                 </div>
-                <div class="input-group mb-6 password-wrapper">
-                    <i class="fas fa-lock"></i>
-                    <input id="passwordInput" type="password" name="password" placeholder="Password" required
-                        class="w-full pr-12 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300">
-                    <button type="button" id="togglePassword" class="password-toggle-button absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
-                        aria-label="Show password" title="Show password">
-                        <i class="fas fa-eye" aria-hidden="true"></i>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+
+                <form id="loginForm" action="/" method="POST">
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" 
+                                   name="username" 
+                                   class="form-input" 
+                                   placeholder="Enter your username"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock input-icon"></i>
+                            <input type="password" 
+                                   name="password" 
+                                   id="passwordInput"
+                                   class="form-input" 
+                                   placeholder="Enter your password"
+                                   required>
+                            <button type="button" 
+                                    id="togglePassword" 
+                                    class="password-toggle"
+                                    aria-label="Toggle password visibility">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="loginBtn" class="btn">
+                        <span>Check Attendance</span>
+                        <i class="fas fa-arrow-right"></i>
+                        <div class="loader" id="loader"></div>
                     </button>
-                </div>
-                <button type="submit" id="loginBtn"
-                    class="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 transform hover:scale-105 shadow-lg">
-                    <i class="fas fa-sign-in-alt mr-2"></i>Check Attendance
-                </button>
-            </form>
-            <div id="loader"></div>
+                </form>
+            </div>
         </div>
     </main>
 
-    <!-- Professional and Responsive Footer -->
-    <footer class="bg-gray-800 text-gray-300 shadow-inner">
-        <div class="container mx-auto px-6 py-8">
-            <div class="flex flex-col md:flex-row justify-evenly items-center md:items-center space-y-8 md:space-y-0">
-
-                <!-- Personal & Academic Details -->
-              
-
-                <!-- GitHub Contribution Section -->
-                <div class="text-center md:text-center max-w-md mx-auto md:mx-0">
-                    <h3 class="font-semibold text-lg text-white mb-2">Contribute to this Project</h3>
-                    <p class="text-sm mb-4">
-                        This is an open-source project. Feel free to collaborate, report issues, or suggest improvements
-                        on GitHub.
-                    </p>
-                    <a href="https://github.com/Chanikya-WebDev/JNTUA---Attendance-app" target="_blank"
-                        rel="noopener noreferrer"
-                        class="inline-flex items-center justify-center px-4 py-2 bg-gray-700 hover:bg-indigo-600 text-white font-medium rounded-lg shadow-md transition-colors duration-300">
-                        <!-- GitHub Icon SVG -->
-                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path fill-rule="evenodd"
-                                d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.839 9.492.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.378.203 2.398.1 2.65.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0022 12c0-5.523-4.477-10-10-10z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        Contribute on GitHub
-                    </a>
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <h3 class="footer-title">Open Source Project</h3>
+                <p class="footer-text">
+                    This project is open source. Feel free to contribute, report issues, 
+                    or suggest improvements on GitHub.
+                </p>
+                
+                <a href="https://github.com/Chanikya-WebDev/JNTUA---Attendance-app" 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   class="github-btn">
+                    <i class="fab fa-github"></i>
+                    Contribute on GitHub
+                </a>
+                
+                <div class="footer-bottom">
+                    <p>&copy; 2025 JNTUA Attendance Tracker. All rights reserved.</p>
                 </div>
-
-            </div>
-
-            <!-- Footer Bottom: Copyright -->
-            <div class="mt-8 pt-6 border-t border-gray-700 text-center text-sm">
-                <p>&copy; 2025 JNTUA---Attendance-app. All Rights Reserved.</p>
             </div>
         </div>
     </footer>
@@ -256,95 +974,33 @@
         const form = document.getElementById('loginForm');
         const loader = document.getElementById('loader');
         const loginBtn = document.getElementById('loginBtn');
+        const btnText = loginBtn.querySelector('span');
+        const btnIcon = loginBtn.querySelector('.fa-arrow-right');
 
+        // Form submission handler
         form.addEventListener('submit', function () {
-            loader.style.display = 'block';  // show loader
-            // This timeout is just for demonstration.
-            // In a real app, you would hide the loader upon receiving a response from the server.
-            setTimeout(() => {
-                loader.style.display = 'none';
-            }, 7000);
+            loader.style.display = 'block';
+            btnText.style.opacity = '0.6';
+            btnIcon.style.opacity = '0.6';
+            loginBtn.disabled = true;
         });
 
-        // Button bounce on hover
-        loginBtn.addEventListener('mouseenter', function () {
-            loginBtn.classList.add('animate__animated', 'animate__bounce');
-        });
-
-        loginBtn.addEventListener('mouseleave', function () {
-            loginBtn.classList.remove('animate__animated', 'animate__bounce');
-        });
+        // Password toggle functionality
+        const passwordInput = document.getElementById('passwordInput');
+        const togglePassword = document.getElementById('togglePassword');
         
-        // Show/Hide password toggle (click to toggle, press-and-hold to temporarily show)
-        (function () {
-            const pwdInput = document.getElementById('passwordInput');
-            const toggleBtn = document.getElementById('togglePassword');
-            if (!pwdInput || !toggleBtn) return;
-            const icon = toggleBtn.querySelector('i');
-            let temporarilyShown = false;
-
-            function updateButton() {
-                if (pwdInput.type === 'password') {
-                    toggleBtn.setAttribute('aria-label', 'Show password');
-                    toggleBtn.setAttribute('title', 'Show password');
-                    icon.classList.remove('fa-eye-slash');
-                    icon.classList.add('fa-eye');
-                } else {
-                    toggleBtn.setAttribute('aria-label', 'Hide password');
-                    toggleBtn.setAttribute('title', 'Hide password');
-                    icon.classList.remove('fa-eye');
-                    icon.classList.add('fa-eye-slash');
-                }
-            }
-
-            // Click toggles permanent visibility
-            toggleBtn.addEventListener('click', function (e) {
-                // Do not log the password or expose it in any way
-                pwdInput.type = pwdInput.type === 'password' ? 'text' : 'password';
-                updateButton();
-            });
-
-            // Press-and-hold to temporarily show while holding (only when currently hidden)
-            function handlePressStart(e) {
-                // For touch events, prevent the click from firing afterwards
-                if (e.type === 'touchstart') e.preventDefault();
-                if (pwdInput.type === 'password') {
-                    pwdInput.type = 'text';
-                    temporarilyShown = true;
-                    updateButton();
-                }
-            }
-
-            function handlePressEnd() {
-                if (temporarilyShown) {
-                    pwdInput.type = 'password';
-                    temporarilyShown = false;
-                    updateButton();
-                }
-            }
-
-            toggleBtn.addEventListener('mousedown', handlePressStart);
-            toggleBtn.addEventListener('mouseup', handlePressEnd);
-            toggleBtn.addEventListener('mouseleave', handlePressEnd);
-            toggleBtn.addEventListener('touchstart', handlePressStart, { passive: false });
-            toggleBtn.addEventListener('touchend', handlePressEnd);
-
-            // Initialize correct button state
-            updateButton();
-        })();
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            const icon = togglePassword.querySelector('i');
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+            
+            // Accessibility
+            togglePassword.setAttribute('aria-label', 
+                type === 'password' ? 'Show password' : 'Hide password');
+        });
     </script>
 </body>
-<script>
-    // Hide flash message after 3 seconds
-    window.addEventListener('DOMContentLoaded', function () {
-        var flash = document.getElementById('flash-message');
-        if (flash) {
-            setTimeout(function () {
-                flash.style.display = 'none';
-            }, 3000);
-        }
-    });
-</script>
-</body>
-
 </html>
