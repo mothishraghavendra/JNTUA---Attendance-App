@@ -94,8 +94,8 @@
             position: relative;
             z-index: 1;
             border-bottom: 1px solid var(--gray-200);
-            margin-bottom: 2.5rem;
-            padding-bottom: 2rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
         }
 
         @keyframes fadeInDown {
@@ -111,6 +111,7 @@
 
         .logo {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 1rem;
@@ -119,9 +120,9 @@
         }
 
         .logo-icon {
-            color: #56b8e8;
-            font-size: 2.5rem;
-            filter: drop-shadow(0 4px 12px rgba(86, 184, 232, 0.3));
+            color: #4169E1;
+            font-size: 3.25rem;
+            filter: drop-shadow(0 4px 12px rgba(65, 105, 225, 0.4));
             animation: iconFloat 3s ease-in-out infinite;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
@@ -129,7 +130,7 @@
 
         .logo-icon:hover {
             transform: scale(1.15) translateY(-3px);
-            filter: drop-shadow(0 8px 16px rgba(86, 184, 232, 0.5));
+            filter: drop-shadow(0 8px 16px rgba(65, 105, 225, 0.6));
             animation: iconFloat 1.5s ease-in-out infinite, iconPulse 2s ease-in-out infinite;
         }
 
@@ -139,18 +140,15 @@
         }
 
         @keyframes iconPulse {
-            0%, 100% { filter: drop-shadow(0 4px 8px rgba(86, 184, 232, 0.3)); }
-            50% { filter: drop-shadow(0 8px 20px rgba(86, 184, 232, 0.6)); }
+            0%, 100% { filter: drop-shadow(0 4px 8px rgba(65, 105, 225, 0.4)); }
+            50% { filter: drop-shadow(0 8px 20px rgba(65, 105, 225, 0.7)); }
         }
 
         .logo-text {
             font-size: 1.875rem;
             font-weight: 700;
             letter-spacing: -0.03em;
-            background: linear-gradient(135deg, #56b8e8 0%, #4a9fd8 50%, #3d8bc8 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #000000;
             animation: textGlow 3s ease-in-out infinite;
             position: relative;
         }
@@ -851,16 +849,17 @@
             
             .header {
                 padding: 0;
-                margin-bottom: 2rem;
-                padding-bottom: 1.5rem;
+                margin-bottom: 1.25rem;
+                padding-bottom: 0.75rem;
             }
             
             .logo-text {
+                color: #3920da;
                 font-size: 1.625rem;
             }
 
             .logo-icon {
-                font-size: 2.25rem;
+                font-size: 2.75rem;
             }
 
             .main-content {
@@ -875,6 +874,7 @@
                 display: none;
             }
         }
+        
     </style>
 </head>
 
@@ -888,7 +888,7 @@
                 <header class="header">
                     <div class="logo">
                         <i class="fas fa-graduation-cap logo-icon"></i>
-                        <span class="logo-text" >JNTUA Attendance</span>
+                        <span class="logo-text">JNTUA Attendance</span>
                     </div>
                     <p class="subtitle">Secure access to your attendance records</p>
                 </header>
