@@ -174,6 +174,8 @@ def fetch_single_attendance(session, payload):
 
         return {
             "Subject": payload.get("sub_fullname", "Unknown"),
+            "Start Date":records[0]["date"],
+            "End Date":records[-1]["date"],
             "Total Days": total,
             "No. of Present": present,
             "No. of Absent": total - present,
@@ -184,6 +186,8 @@ def fetch_single_attendance(session, payload):
     except Exception:
         return {
             "Subject": payload.get("sub_fullname", "Unknown"),
+            "Start Date":"",
+            "End Date":"",
             "Total Days": 0,
             "No. of Present": 0,
             "No. of Absent": 0,
