@@ -203,7 +203,7 @@ def dashboard():
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
     if request.method == "POST":
-        try:
+        try:app.send_static_file("robots.txt")
             admission = request.form.get("admission")
             email = request.form.get("user_email")
             message = request.form.get("message")
@@ -292,11 +292,10 @@ def api_attendance():
 
 @app.route("/robots.txt")
 def robots():
-    return send_file(os.path.join(app.root_path, "public", "robots.txt"))("public", "robots.txt")
-
+    return app.send_static_file("robots.txt")
 @app.route("/sitemap.xml")
 def sitemap():
-    return send_file(os.path.join(app.root_path, "public", "robots.txt"))("public", "sitemap.xml")
+    return app.send_static_file("sitemap.xml")
 
 
 @app.route("/icon.png")
