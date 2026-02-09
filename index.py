@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 from flask import (
     Flask, flash, render_template, request,
-    redirect, send_from_directory, session, jsonify
+    redirect, send_from_directory, session, jsonify,Response
 )
 from flask_mail import Mail, Message
 
