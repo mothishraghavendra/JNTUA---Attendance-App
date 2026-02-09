@@ -1,4 +1,3 @@
-print("🔥 RUNNING THIS INDEX.PY FILE 🔥")
 
 import os
 import uuid
@@ -100,6 +99,8 @@ def filter_latest_semester(df):
 def login_page():
     # GET → show login page
     if request.method == "GET":
+        if "query" in request.args or request.args:
+            return redirect("/", code=301)
         return render_template("index.html")
 
     # POST → handle login
@@ -292,6 +293,10 @@ def api_attendance():
 @app.route("/robots.txt")
 def robots():
     return send_from_directory("public", "robots.txt")
+
+@app.route("/sitemap.xml")
+def robots():
+    return send_from_directory("public", "sitemap.xml")
 
 
 @app.route("/icon.png")

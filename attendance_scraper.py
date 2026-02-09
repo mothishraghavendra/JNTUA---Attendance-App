@@ -32,7 +32,7 @@ def login(username: str, password: str) -> requests.Session:
 
         soup = BeautifulSoup(login_page.text, "html.parser")
 
-        # Attempt to find secretcode (OPTIONAL)
+        # Attempt to find secretcode 
         secretcode = None
         secret_input = soup.find("input", {"name": "secretcode"}) \
             or soup.find("input", {"id": "secretcode"})
