@@ -292,11 +292,11 @@ def api_attendance():
 
 @app.route("/robots.txt")
 def robots():
-    return send_from_directory("public", "robots.txt")
+    return send_file(os.path.join(app.root_path, "public", "robots.txt"))("public", "robots.txt")
 
 @app.route("/sitemap.xml")
 def sitemap():
-    return send_from_directory("public", "sitemap.xml")
+    return send_file(os.path.join(app.root_path, "public", "robots.txt"))("public", "sitemap.xml")
 
 
 @app.route("/icon.png")
