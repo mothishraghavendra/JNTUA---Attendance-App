@@ -203,7 +203,7 @@ def dashboard():
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
     if request.method == "POST":
-        try:app.send_static_file("robots.txt")
+        try:
             admission = request.form.get("admission")
             email = request.form.get("user_email")
             message = request.form.get("message")
@@ -292,10 +292,34 @@ def api_attendance():
 
 @app.route("/robots.txt")
 def robots():
-    return app.send_static_file("robots.txt")
+    content = """User-agent: *
+Allow: /
+
+Sitemap: https://jntua-attendance-app.vercel.app/sitemap.xml
+"""
+    return Response(content, mimetype="text/plain")
+
 @app.route("/sitemap.xml")
 def sitemap():
-    return app.send_static_file("sitemap.xml")
+    xml = """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <url>
+    <loc>https://jntua-attendance-app.vercel.app/</loc>
+    <lastmod>2026-02-09</lastmod>
+    <priority>1.0</priority>
+  </url>
+
+
+  <url>
+    <loc>https://jntua-attendance-app.vercel.app/contact</loc>
+    <lastmod>2026-02-09</lastmod>
+    <priority>0.8</priority>
+  </url>
+
+</urlset>
+"""
+    return Response(xml, mimetype="application/xml")
 
 
 @app.route("/icon.png")
