@@ -1,1062 +1,635 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="icon.png" type="image/png">
-    <title>JNTUA Attendance</title>
-    <meta name="title" content="JNTUA Attendance">
-    <meta name="description"
-        content="Check your JNTUA student attendance online easily with the JNTUA Attendance App. View subject-wise attendance percentage, total classes, and attendance details.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="icon.png" type="image/png">
+  <title>JNTUA Attendance — Check Your Attendance</title>
 
-    <!-- Keywords for SEO -->
-    <meta name="keywords"
-        content="JNTUA Attendance, JNTUA Student Attendance, JNTUA Attendance App, Attendance Checker, JNTUA College, Attendance Percentage">
+  <!-- SEO -->
+  <meta name="title" content="JNTUA Attendance">
+  <meta name="description" content="Check your JNTUA student attendance online. View subject-wise attendance percentage, total classes, and attendance details instantly.">
+  <meta name="keywords" content="JNTUA Attendance, JNTUA Student Attendance, JNTUA Attendance App, Attendance Checker, JNTUA College, Attendance Percentage">
+  <meta name="author" content="JNTUA Attendance">
+  <meta name="robots" content="index, follow">
+  <meta name="google-site-verification" content="nAk-gVEnTA0DrUpJK8cwCIuPdg-mkRbL7Veam5i9m2I">
+  <link rel="canonical" href="https://jntua-attendance-app.vercel.app/">
 
-    <!-- Author -->
-    <meta name="author" content="JNTUA Attendance">
-    <meta name="google-site-verification" content="nAk-gVEnTA0DrUpJK8cwCIuPdg-mkRbL7Veam5i9m2I" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://jntua-attendance-app.vercel.app/">
+  <meta property="og:title" content="JNTUA Attendance">
+  <meta property="og:description" content="Check your JNTUA student attendance online easily.">
+  <meta property="og:image" content="https://jntua-attendance-app.vercel.app/assets/og-image.png">
 
-    <!-- add canonical url for query parameter route -->
-     <link rel="canonical" href="https://jntua-attendance-app.vercel.app/">
-
-     <!-- Google ad sense meta tag -->
-      <meta name="google-adsense-account" content="ca-pub-9831921446818794">
-
-<!-- google adsense ad code  -->
- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9831921446818794"
-     crossorigin="anonymous"></script>
-
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/output.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "JNTUA Attendance",
-  "url": "https://jntua-attendance-app.vercel.app/",
-  "description": "A student-friendly web application that fetches and displays real-time attendance data for JNTUA students.",
-  "applicationCategory": "EducationalApplication",
-  "operatingSystem": "Web",
-  "creator": {
-    "@type": "Person",
-    "name": "Chanikya",
-    "url": "https://github.com/Chanikya-WebDev"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "JNTUA Attendance Team",
-    "url": "https://jntua-attendance-app.vercel.app/"
-  },
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "INR"
-  },
-  "inLanguage": "en-IN",
-  "softwareVersion": "1.0.0",
-  "datePublished": "2025-09-20",
-  "image": "https://jntua-attendance-app.vercel.app/assets/og-image.png",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://jntua-attendance-app.vercel.app/?query={search_term_string}",
-    "query-input": "required name=search_term_string"
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "JNTUA Attendance",
+    "url": "https://jntua-attendance-app.vercel.app/",
+    "description": "A student-friendly web application that fetches and displays real-time attendance data for JNTUA students.",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Web",
+    "creator": { "@type": "Person", "name": "Chanikya", "url": "https://github.com/Chanikya-WebDev" },
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+    "inLanguage": "en-IN"
   }
-}
+  </script>
+
+  <!-- Google AdSense — non-blocking -->
+  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9831921446818794" crossorigin="anonymous"></script> -->
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #F4F6F9;
+      --card:     #FFFFFF;
+      --border:   #E5E9F0;
+      --ink:      #1A1F2E;
+      --ink-soft: #374151;
+      --muted:    #8892A0;
+      --rule:     #EEF0F5;
+      --purple:   #7C3AED;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 28px 16px 60px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── EYEBROW ── */
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .eyebrow-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #22C55E;
+      animation: blink 2s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.25; }
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      margin-bottom: 32px;
+      animation: fadeUp 0.45s ease both;
+    }
+
+    .site-header h1 {
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .site-header .sub {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── SECTION HEAD ── */
+    .section-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      animation: fadeUp 0.45s 0.08s both;
+    }
+
+    .sh-label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .sh-line { flex: 1; height: 1px; background: var(--border); }
+
+    .sh-badge {
+      font-size: 0.64rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 20px;
+      white-space: nowrap;
+      background: #EFF6FF;
+      color: #1D4ED8;
+      border: 1px solid #BFDBFE;
+    }
+
+    /* ── LOGIN CARD ── */
+    .login-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      margin-bottom: 12px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      animation: fadeUp 0.45s 0.12s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    .login-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.07);
+    }
+
+    .card-bar {
+      width: 4px;
+      flex-shrink: 0;
+      background: linear-gradient(180deg, var(--purple), #2563EB);
+    }
+
+    .card-inner {
+      flex: 1;
+      padding: 28px 28px 24px;
+    }
+
+    /* ── ALERT ── */
+    .alert {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 20px;
+      animation: fadeUp 0.3s ease both;
+    }
+
+    .alert-error   { background: #FFF1F2; border-color: #FECDD3; color: #9F1239; }
+    .alert-success { background: #F0FDF4; border-color: #BBF7D0; color: #14532D; }
+
+    /* Shared size for all alert SVG icons */
+    .alert > svg {
+      flex-shrink: 0;
+      width: 15px;
+      height: 15px;
+      margin-top: 1px;
+    }
+
+    /* ── FORM ── */
+    .form-group { margin-bottom: 16px; }
+
+    .form-label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    /* The wrapper positions the leading icon and optional trailing button */
+    .input-wrap {
+      position: relative;
+    }
+
+    /* Leading icon — absolutely centred on the left */
+    .input-wrap .ico {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 14px;
+      height: 14px;
+      color: var(--muted);
+      pointer-events: none;
+      transition: color 0.15s;
+      /* prevent SVG from stretching */
+      flex-shrink: 0;
+    }
+
+    /* Tint leading icon when the sibling input is focused */
+    .input-wrap:focus-within .ico { color: var(--purple); }
+
+    .form-input {
+      width: 100%;
+      /* left: room for leading icon | right: small buffer */
+      padding: 10px 12px 10px 34px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: var(--bg);
+      font-size: 0.85rem;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      font-family: inherit;
+    }
+
+    /* Extra right padding when the eye-toggle button is present */
+    .form-input.has-toggle { padding-right: 38px; }
+
+    .form-input::placeholder { color: var(--muted); }
+
+    .form-input:focus {
+      border-color: #A78BFA;
+      box-shadow: 0 0 0 3px rgba(167,139,250,0.15);
+      background: var(--card);
+    }
+
+    /* ── EYE TOGGLE ── */
+    .pw-toggle {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 0;
+      transition: color 0.15s;
+    }
+
+    .pw-toggle:hover { color: var(--purple); }
+
+    /* Both SVGs live inside the button; JS toggles display */
+    .pw-toggle svg {
+      width: 15px;
+      height: 15px;
+      pointer-events: none;
+    }
+
+    /* ── SUBMIT BUTTON ── */
+    .btn-submit {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      width: 100%;
+      padding: 11px 16px;
+      background: var(--purple);
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+      font-family: inherit;
+      letter-spacing: 0.3px;
+      box-shadow: 0 4px 14px rgba(124,58,237,0.3);
+      margin-top: 20px;
+    }
+
+    .btn-submit:hover:not(:disabled) {
+      background: #6D28D9;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(124,58,237,0.4);
+    }
+
+    .btn-submit:active:not(:disabled) { transform: translateY(0); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* Arrow SVG inside button */
+    .btn-submit > svg {
+      width: 14px; height: 14px;
+      flex-shrink: 0;
+      transition: transform 0.15s;
+    }
+
+    .btn-submit:hover:not(:disabled) > svg { transform: translateX(3px); }
+
+    /* ── SPINNER ── */
+    .spinner {
+      display: none;
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── TIP ── */
+    .tip-box {
+      margin-top: 4px;
+      padding: 13px 16px;
+      background: #F5F3FF;
+      border: 1px solid #DDD6FE;
+      border-radius: 12px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      animation: fadeUp 0.45s 0.22s both;
+    }
+
+    .tip-icon {
+      flex-shrink: 0;
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      background: var(--purple);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+    }
+
+    .tip-icon svg { width: 13px; height: 13px; }
+
+    .tip-title { font-size: 0.75rem; font-weight: 700; color: #3B0764; margin-bottom: 2px; }
+    .tip-text  { font-size: 0.71rem; color: #5B21B6; line-height: 1.55; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      color: #D1D5DB;
+      margin-top: auto;
+    }
+
+    .footer-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 36px 16px 24px;
+      text-align: center;
+    }
+
+    .footer-inner h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .footer-inner p {
+      font-size: 0.78rem;
+      line-height: 1.65;
+      margin-bottom: 18px;
+      color: #9CA3AF;
+    }
+
+    .github-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      background: #374151;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 9px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border: 1px solid #4B5563;
+      transition: background 0.15s, transform 0.15s;
+    }
+
+    .github-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .github-btn:hover { background: #4B5563; transform: translateY(-1px); }
+
+    .footer-bottom {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid #374151;
+      font-size: 0.68rem;
+      color: #6B7280;
+    }
+
+    /* ── ANIMATION ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 480px) {
+      .card-inner { padding: 20px 18px 18px; }
+      .site-header h1 { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="eyebrow">
+      <span class="eyebrow-dot"></span>
+      JNTUA · Attendance Portal
+    </div>
+    <h1>Check Your Attendance</h1>
+    <p class="sub">Secure access to your JNTUA attendance records — subject-wise, updated in real time.</p>
+  </header>
+
+  <!-- SECTION HEAD -->
+  <div class="section-head">
+    <span class="sh-label">Student Login</span>
+    <div class="sh-line"></div>
+    <span class="sh-badge">JNTUA Portal</span>
+  </div>
+<main>
+  <!-- LOGIN CARD -->
+  <div class="login-card">
+    <div class="card-bar"></div>
+    <div class="card-inner">
+
+      <!-- Flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ 'error' if category == 'error' else 'success' }}" role="alert">
+          {% if category == 'error' %}
+          <!-- Circle exclamation -->
+          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zM7.5 4h1v5h-1V4zm.5 7.5a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5z"/>
+          </svg>
+          {% else %}
+          <!-- Circle check -->
+          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm3.03 5.47-3.5 4.5a.75.75 0 0 1-1.13.07l-1.5-1.5a.75.75 0 1 1 1.06-1.06l.92.92 2.98-3.83a.75.75 0 1 1 1.17.94z"/>
+          </svg>
+          {% endif %}
+          <span>{{ message }}</span>
+        </div>
+        {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+      <form id="loginForm" action="/" method="POST" novalidate>
+
+        <!-- USERNAME -->
+        <div class="form-group">
+          <label class="form-label" for="username">Username</label>
+          <div class="input-wrap">
+            <!-- Leading icon: person/user -->
+            <svg class="ico" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-5 6a5 5 0 0 1 10 0H3z"/>
+            </svg>
+            <input type="text"
+                   id="username"
+                   name="username"
+                   class="form-input"
+                   placeholder="Enter your username"
+                   autocomplete="username"
+                   required
+                   aria-required="true">
+          </div>
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="form-group">
+          <label class="form-label" for="passwordInput">Password</label>
+          <div class="input-wrap">
+            <!-- Leading icon: lock -->
+            <svg class="ico" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path d="M8 1a3.5 3.5 0 0 0-3.5 3.5V6H3a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-1.5V4.5A3.5 3.5 0 0 0 8 1zm-2 3.5a2 2 0 0 1 4 0V6H6V4.5z"/>
+            </svg>
+            <input type="password"
+                   id="passwordInput"
+                   name="password"
+                   class="form-input has-toggle"
+                   placeholder="Enter your password"
+                   autocomplete="current-password"
+                   required
+                   aria-required="true">
+            <!-- Eye toggle: two SVGs, JS swaps them -->
+            <button type="button" id="togglePassword" class="pw-toggle" aria-label="Show password">
+              <!-- Eye open — visible when type=password -->
+              <svg id="iconEyeOpen" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.1 13.1 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13.1 13.1 0 0 1 14.828 8a13.1 13.1 0 0 1-1.66 2.043C11.879 11.332 10.12 12.5 8 12.5s-3.879-1.168-5.168-2.457A13.1 13.1 0 0 1 1.172 8z"/>
+                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+              </svg>
+              <!-- Eye with slash — visible when type=text -->
+              <svg id="iconEyeSlash" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" style="display:none;">
+                <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.03 7.03 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486l.708.709z"/>
+                <path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829l.822.822zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829z"/>
+                <path d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12-.708.708z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- SUBMIT -->
+        <button type="submit" id="loginBtn" class="btn-submit">
+          <span id="btnText">Check Attendance</span>
+          <!-- Arrow right -->
+          <svg id="btnArrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="2" y1="8" x2="14" y2="8"/>
+            <polyline points="9 3 14 8 9 13"/>
+          </svg>
+          <div class="spinner" id="spinner" aria-hidden="true"></div>
+        </button>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- TIP -->
+  <div class="tip-box">
+    <div class="tip-icon" aria-hidden="true">
+      <!-- Shield check -->
+      <svg viewBox="0 0 16 16" fill="currentColor">
+        <path d="M8 .5 1 3v4.5C1 11.202 4.09 14.52 8 15.5c3.91-.98 7-4.298 7-8V3L8 .5zm2.78 5.78-3.5 3.5a.75.75 0 0 1-1.06 0l-1.5-1.5a.75.75 0 1 1 1.06-1.06l.97.97 2.97-2.97a.75.75 0 0 1 1.06 1.06z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="tip-title">Your credentials are safe</div>
+      <p class="tip-text">We use your JNTUA portal credentials only to fetch attendance. Nothing is stored on our servers.</p>
+    </div>
+  </div>
+
+  <div style="text-align:center; margin-top:36px; font-size:0.68rem; color:var(--muted);">
+    JNTUA Attendance App &nbsp;·&nbsp; 2026
+  </div>
+
+</div><!-- end .page -->
+</main>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <h2>Open Source Project</h2>
+    <p>This project is open source. Feel free to contribute, report issues, or suggest improvements on GitHub.</p>
+    <a href="https://github.com/Chanikya-WebDev/JNTUA---Attendance-app"
+       target="_blank"
+       rel="noopener noreferrer"
+       class="github-btn">
+      <!-- GitHub mark -->
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.839 9.492.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.378.203 2.398.1 2.65.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0 0 22 12c0-5.523-4.477-10-10-10z" clip-rule="evenodd"/>
+      </svg>
+      Contribute on GitHub
+    </a>
+    <div class="footer-bottom">
+      <p>&copy; 2025 JNTUA Attendance Tracker. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── Password visibility toggle ──
+  const pwInput   = document.getElementById('passwordInput');
+  const pwToggle  = document.getElementById('togglePassword');
+  const eyeOpen   = document.getElementById('iconEyeOpen');
+  const eyeSlash  = document.getElementById('iconEyeSlash');
+
+  pwToggle.addEventListener('click', () => {
+    const hidden = pwInput.type === 'password';
+    pwInput.type          = hidden ? 'text' : 'password';
+    eyeOpen.style.display  = hidden ? 'none'  : '';
+    eyeSlash.style.display = hidden ? ''      : 'none';
+    pwToggle.setAttribute('aria-label', hidden ? 'Hide password' : 'Show password');
+  });
+
+  // ── Form submit loading state ──
+  const form    = document.getElementById('loginForm');
+  const btn     = document.getElementById('loginBtn');
+  const btnText = document.getElementById('btnText');
+  const btnArrow= document.getElementById('btnArrow');
+  const spinner = document.getElementById('spinner');
+
+  form.addEventListener('submit', () => {
+    btn.disabled           = true;
+    btnText.textContent    = 'Loading…';
+    btnArrow.style.display = 'none';
+    spinner.style.display  = 'block';
+  });
 </script>
 
-    <style>
-        :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --primary-light: #818cf8;
-            --secondary: #8b5cf6;
-            --accent: #a855f7;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-400: #9ca3af;
-            --gray-500: #6b7280;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --gray-900: #111827;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            background: linear-gradient(135deg, #56b8e8 0%, #4a9fd8 50%, #3d8bc8 100%);
-            background-attachment: fixed;
-            min-height: 100vh;
-            color: var(--gray-800);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.12) 0%, transparent 50%),
-                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.03) 4px);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-            width: 100%;
-        }
-
-        /* Header Styles */
-        .header {
-            padding: 0;
-            text-align: center;
-            background: transparent;
-            animation: fadeInDown 0.8s ease-out;
-            position: relative;
-            z-index: 1;
-            border-bottom: 1px solid var(--gray-200);
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .logo {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 0.75rem;
-            position: relative;
-        }
-
-        .logo-icon {
-            color: #4169E1;
-            font-size: 3.25rem;
-            filter: drop-shadow(0 4px 12px rgba(65, 105, 225, 0.4));
-            animation: iconFloat 3s ease-in-out infinite;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-        }
-
-        .logo-icon:hover {
-            transform: scale(1.15) translateY(-3px);
-            filter: drop-shadow(0 8px 16px rgba(65, 105, 225, 0.6));
-            animation: iconFloat 1.5s ease-in-out infinite, iconPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes iconFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-
-        @keyframes iconPulse {
-            0%, 100% { filter: drop-shadow(0 4px 8px rgba(65, 105, 225, 0.4)); }
-            50% { filter: drop-shadow(0 8px 20px rgba(65, 105, 225, 0.7)); }
-        }
-
-        .logo-text {
-            font-size: 1.875rem;
-            font-weight: 700;
-            letter-spacing: -0.03em;
-            color: #000000;
-            animation: textGlow 3s ease-in-out infinite;
-            position: relative;
-        }
-
-        @keyframes textGlow {
-            0%, 100% { opacity: 1; filter: brightness(1); }
-            50% { opacity: 1; filter: brightness(1.1); }
-        }
-
-        .subtitle {
-            color: var(--gray-600);
-            font-size: 1rem;
-            font-weight: 500;
-            margin: 0;
-            animation: fadeInUp 1s ease-out 0.2s both;
-            letter-spacing: 0.01em;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Main Content */
-        .main-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex: 1;
-            padding: 4rem 1rem;
-            min-height: calc(100vh - 250px);
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Floating decorative elements */
-        .floating-shape {
-            position: fixed;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            pointer-events: none;
-            z-index: 0;
-            animation: float 20s ease-in-out infinite;
-        }
-
-        .floating-shape:nth-child(1) {
-            width: 200px;
-            height: 200px;
-            top: 10%;
-            left: 10%;
-            animation-delay: 0s;
-        }
-
-        .floating-shape:nth-child(2) {
-            width: 150px;
-            height: 150px;
-            top: 60%;
-            right: 10%;
-            animation-delay: 5s;
-        }
-
-        .floating-shape:nth-child(3) {
-            width: 100px;
-            height: 100px;
-            bottom: 20%;
-            left: 20%;
-            animation-delay: 10s;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translate(0, 0) scale(1);
-                opacity: 0.3;
-            }
-            33% {
-                transform: translate(30px, -30px) scale(1.1);
-                opacity: 0.4;
-            }
-            66% {
-                transform: translate(-20px, 20px) scale(0.9);
-                opacity: 0.35;
-            }
-        }
-
-        .content-wrapper {
-            width: 100%;
-            max-width: 440px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        /* Login Card */
-        .login-card {
-            width: 100%;
-            max-width: 460px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(30px) saturate(180%);
-            -webkit-backdrop-filter: blur(30px) saturate(180%);
-            border-radius: 2rem;
-            box-shadow: 
-                0 25px 80px rgba(0, 0, 0, 0.2),
-                0 10px 30px rgba(0, 0, 0, 0.1),
-                0 0 0 1px rgba(255, 255, 255, 0.6),
-                inset 0 1px 0 rgba(255, 255, 255, 0.9),
-                inset 0 -1px 0 rgba(255, 255, 255, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 3rem 2.5rem;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            animation: cardSlideIn 0.8s ease-out 0.3s both;
-        }
-
-        @keyframes cardSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(40px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .login-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, #56b8e8, #4a9fd8, #3d8bc8, #56b8e8);
-            background-size: 300% 100%;
-            animation: gradientBorder 4s linear infinite;
-            border-radius: 2rem 2rem 0 0;
-        }
-
-        @keyframes gradientBorder {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 200% 50%; }
-        }
-
-        .login-card::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            pointer-events: none;
-        }
-
-        .login-card:hover {
-            transform: translateY(-10px) scale(1.01);
-            box-shadow: 
-                0 35px 100px rgba(0, 0, 0, 0.25),
-                0 15px 40px rgba(0, 0, 0, 0.15),
-                0 0 0 1px rgba(255, 255, 255, 0.6),
-                0 0 60px rgba(86, 184, 232, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.9);
-        }
-
-        .login-card:hover::after {
-            opacity: 1;
-        }
-
-        .card-title {
-            font-size: 2rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.75rem;
-            text-align: center;
-            letter-spacing: -0.03em;
-            animation: titleFadeIn 0.8s ease-out 0.5s both;
-            position: relative;
-            line-height: 1.2;
-        }
-
-        @keyframes titleFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .card-subtitle {
-            color: var(--gray-600);
-            text-align: center;
-            margin-bottom: 2.5rem;
-            font-size: 0.9375rem;
-            font-weight: 500;
-            animation: subtitleFadeIn 0.8s ease-out 0.6s both;
-        }
-
-        @keyframes subtitleFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Form Styles */
-        .form-group {
-            margin-bottom: 1.5rem;
-            animation: formGroupFadeIn 0.6s ease-out both;
-        }
-
-        .form-group:last-of-type {
-            margin-bottom: 2rem;
-        }
-
-        .form-group:nth-child(1) {
-            animation-delay: 0.7s;
-        }
-
-        .form-group:nth-child(2) {
-            animation-delay: 0.8s;
-        }
-
-        @keyframes formGroupFadeIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .form-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--gray-700);
-            margin-bottom: 0.625rem;
-            letter-spacing: 0.01em;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .form-group:focus-within .form-label {
-            color: #56b8e8;
-            transform: translateX(2px);
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-icon {
-            position: absolute;
-            left: 1.125rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--gray-500);
-            pointer-events: none;
-            transition: all 0.3s ease;
-            font-size: 1.125rem;
-            width: 1.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 1.125rem 1rem 1.125rem 3.25rem;
-            font-size: 0.9375rem;
-            border: 2px solid var(--gray-200);
-            border-radius: 1rem;
-            background: rgba(255, 255, 255, 0.9);
-            color: var(--gray-800);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-weight: 500;
-            position: relative;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-        }
-
-        .form-input::placeholder {
-            color: var(--gray-400);
-            font-weight: 400;
-            transition: opacity 0.3s ease;
-        }
-
-        .form-input:hover:not(:focus) {
-            border-color: var(--gray-300);
-            background: var(--gray-50);
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #56b8e8;
-            background: white;
-            box-shadow: 
-                0 0 0 4px rgba(86, 184, 232, 0.12),
-                0 6px 20px rgba(86, 184, 232, 0.15),
-                0 2px 8px rgba(0, 0, 0, 0.05);
-            transform: translateY(-2px);
-        }
-
-        .form-input:focus::placeholder {
-            opacity: 0.5;
-        }
-
-        .input-wrapper:has(.form-input:focus) .input-icon {
-            color: #56b8e8;
-            transform: translateY(-50%) scale(1.15);
-            filter: drop-shadow(0 2px 4px rgba(86, 184, 232, 0.3));
-        }
-
-        .input-wrapper::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #56b8e8, #4a9fd8, transparent);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 0;
-            border-radius: 2px;
-        }
-
-        .input-wrapper:has(.form-input:focus)::before {
-            transform: scaleX(1);
-        }
-
-        .password-toggle {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: var(--gray-500);
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            width: 2.5rem;
-            height: 2.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2;
-        }
-
-        .password-toggle:hover {
-            color: #56b8e8;
-            background: rgba(86, 184, 232, 0.1);
-            transform: translateY(-50%) scale(1.15);
-        }
-
-        .password-toggle:active {
-            transform: translateY(-50%) scale(0.9);
-        }
-
-        .password-toggle i {
-            transition: transform 0.3s ease;
-        }
-
-        .password-toggle:hover i {
-            transform: scale(1.2);
-        }
-
-        /* Button Styles */
-        .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            width: 100%;
-            padding: 1.125rem 1.75rem;
-            font-size: 1.0625rem;
-            font-weight: 600;
-            border: none;
-            border-radius: 1rem;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            background: linear-gradient(135deg, #56b8e8 0%, #4a9fd8 50%, #3d8bc8 100%);
-            background-size: 200% 200%;
-            color: white;
-            box-shadow: 
-                0 8px 20px rgba(86, 184, 232, 0.4),
-                0 4px 10px rgba(86, 184, 232, 0.3),
-                0 2px 4px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            position: relative;
-            overflow: hidden;
-            animation: buttonFadeIn 0.8s ease-out 0.9s both;
-            letter-spacing: 0.01em;
-        }
-
-        @keyframes buttonFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .btn:hover:not(:disabled)::before {
-            left: 100%;
-        }
-
-        .btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s ease, height 0.6s ease;
-        }
-
-        .btn:hover:not(:disabled)::after {
-            width: 300px;
-            height: 300px;
-        }
-
-        .btn:hover:not(:disabled) {
-            background-position: right center;
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 
-                0 15px 40px rgba(86, 184, 232, 0.5),
-                0 8px 20px rgba(86, 184, 232, 0.4),
-                0 4px 8px rgba(0, 0, 0, 0.15),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        }
-
-        .btn:hover:not(:disabled) .fa-arrow-right {
-            transform: translateX(4px);
-        }
-
-        .btn:active:not(:disabled) {
-            transform: translateY(-1px) scale(0.98);
-            box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.4);
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn .fa-arrow-right {
-            transition: transform 0.3s ease;
-        }
-
-        /* Alert Messages */
-        .alert {
-            padding: 1rem 1.25rem;
-            border-radius: 0.875rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.875rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            animation: slideDown 0.5s cubic-bezier(0.4, 0, 0.2, 1), shake 0.5s ease 0.3s;
-            border: 1px solid;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .alert::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        .alert-error {
-            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-            border-color: #fecaca;
-            color: #991b1b;
-        }
-
-        .alert-success {
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-            border-color: #bbf7d0;
-            color: #166534;
-        }
-
-        .alert-icon {
-            font-size: 1.125rem;
-            flex-shrink: 0;
-            margin-top: 0.125rem;
-        }
-
-        /* Loader */
-        .loader {
-            display: none;
-            width: 1.5rem;
-            height: 1.5rem;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Footer */
-        .footer {
-            background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
-            color: white;
-            padding: 3.5rem 0 2.5rem;
-            margin-top: auto;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-            position: relative;
-            z-index: 1;
-            animation: footerFadeIn 1s ease-out 1s both;
-        }
-
-        @keyframes footerFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .footer-content {
-            text-align: center;
-            max-width: 650px;
-            margin: 0 auto;
-        }
-
-        .footer-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            letter-spacing: -0.02em;
-        }
-
-        .footer-text {
-            color: var(--gray-300);
-            margin-bottom: 2rem;
-            line-height: 1.7;
-            font-size: 0.9375rem;
-        }
-
-        .github-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.9375rem 1.75rem;
-            background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 0.875rem;
-            font-weight: 600;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(75, 85, 99, 0.5);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .github-btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s ease, height 0.6s ease;
-        }
-
-        .github-btn:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        .github-btn:hover {
-            background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-            border-color: rgba(99, 102, 241, 0.5);
-        }
-
-        .github-btn:hover .fab {
-            transform: rotate(360deg) scale(1.2);
-        }
-
-        .github-btn .fab {
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .footer-bottom {
-            margin-top: 2.5rem;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(75, 85, 99, 0.5);
-            color: var(--gray-400);
-            font-size: 0.875rem;
-        }
-
-        /* Enhanced focus visible for accessibility */
-        *:focus-visible {
-            outline: 2px solid #56b8e8;
-            outline-offset: 2px;
-        }
-
-        /* Smooth scroll behavior */
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* Responsive */
-        @media (max-width: 640px) {
-            .login-card {
-                padding: 2.75rem 2rem;
-                border-radius: 1.5rem;
-                max-width: 100%;
-            }
-            
-            .header {
-                padding: 0;
-                margin-bottom: 1.25rem;
-                padding-bottom: 0.75rem;
-            }
-            
-            .logo-text {
-                color: #3920da;
-                font-size: 1.625rem;
-            }
-
-            .logo-icon {
-                font-size: 2.75rem;
-            }
-
-            .main-content {
-                padding: 2.5rem 1rem;
-            }
-
-            .footer {
-                padding: 2.5rem 0 2rem;
-            }
-
-            .floating-shape {
-                display: none;
-            }
-        }
-        
-    </style>
-</head>
-
-<body class="flex flex-col min-h-screen">
-    <div class="floating-shape"></div>
-    <div class="floating-shape"></div>
-    <div class="floating-shape"></div>
-    <main class="main-content">
-        <div class="content-wrapper">
-            <div class="login-card">
-                <header class="header">
-                    <div class="logo">
-                        <i class="fas fa-graduation-cap logo-icon"></i>
-                        <span class="logo-text">JNTUA Attendance</span>
-                    </div>
-                    <p class="subtitle">Secure access to your attendance records</p>
-                </header>
-
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                {% for category, message in messages %}
-                <div class="alert alert-{{ 'error' if category == 'error' else 'success' }}">
-                    <i class="fas fa-{{ 'exclamation-circle' if category == 'error' else 'check-circle' }} alert-icon"></i>
-                    <span>{{ message }}</span>
-                </div>
-                {% endfor %}
-                {% endif %}
-                {% endwith %}
-
-                <form id="loginForm" action="/" method="POST">
-                    <div class="form-group">
-                        <label class="form-label">Username</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-user input-icon"></i>
-                            <input type="text" 
-                                   name="username" 
-                                   class="form-input" 
-                                   placeholder="Enter your username"
-                                   required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Password</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-lock input-icon"></i>
-                            <input type="password" 
-                                   name="password" 
-                                   id="passwordInput"
-                                   class="form-input" 
-                                   placeholder="Enter your password"
-                                   required>
-                            <button type="button" 
-                                    id="togglePassword" 
-                                    class="password-toggle"
-                                    aria-label="Toggle password visibility">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <button type="submit" id="loginBtn" class="btn">
-                        <span>Check Attendance</span>
-                        <i class="fas fa-arrow-right"></i>
-                        <div class="loader" id="loader"></div>
-                    </button>
-                </form>
-            </div>
-        </div>
-    </main>
-
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <h3 class="footer-title">Open Source Project</h3>
-                <p class="footer-text">
-                    This project is open source. Feel free to contribute, report issues, 
-                    or suggest improvements on GitHub.
-                </p>
-                
-                <a href="https://github.com/Chanikya-WebDev/JNTUA---Attendance-app" 
-                   target="_blank" 
-                   rel="noopener noreferrer" 
-                   class="github-btn">
-                    <i class="fab fa-github"></i>
-                    Contribute on GitHub
-                </a>
-                
-                <div class="footer-bottom">
-                    <p>&copy; 2025 JNTUA Attendance Tracker. All rights reserved.</p>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        const form = document.getElementById('loginForm');
-        const loader = document.getElementById('loader');
-        const loginBtn = document.getElementById('loginBtn');
-        const btnText = loginBtn.querySelector('span');
-        const btnIcon = loginBtn.querySelector('.fa-arrow-right');
-
-        // Form submission handler
-        form.addEventListener('submit', function () {
-            loader.style.display = 'block';
-            btnText.style.opacity = '0.6';
-            btnIcon.style.opacity = '0.6';
-            loginBtn.disabled = true;
-        });
-
-        // Password toggle functionality
-        const passwordInput = document.getElementById('passwordInput');
-        const togglePassword = document.getElementById('togglePassword');
-        
-        togglePassword.addEventListener('click', () => {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            
-            const icon = togglePassword.querySelector('i');
-            icon.classList.toggle('fa-eye');
-            icon.classList.toggle('fa-eye-slash');
-            
-            // Accessibility
-            togglePassword.setAttribute('aria-label', 
-                type === 'password' ? 'Show password' : 'Hide password');
-        });
-    </script>
 </body>
 </html>
