@@ -1,143 +1,211 @@
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
+import concurrent.futures
 
 BASE_URL = "https://jntuaceastudents.classattendance.in/"
 
+# --------------------------------------------------
+# LOGIN
+# --------------------------------------------------
 def login(username: str, password: str) -> requests.Session:
     session = requests.Session()
-    login_page = session.get(BASE_URL)
-    soup = BeautifulSoup(login_page.text, "html.parser")
-    secretcode = soup.find("input", {"name": "secretcode"})["value"]
-    
-    payload = {"username": username, "password": password, "secretcode": secretcode}
-    res = session.post(BASE_URL, data=payload)
-    
-    if "studenthome.php" not in res.url:
-        raise ValueError("Login failed. Check username/password.")
-    
-    return session
 
+    session.headers.update({
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/120.0.0.0 Safari/537.36"
+        ),
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Connection": "keep-alive",
+        "Upgrade-Insecure-Requests": "1",
+    })
+
+    try:
+        # Load login page
+        login_page = session.get(BASE_URL, timeout=15, allow_redirects=True)
+
+        if login_page.status_code != 200 or not login_page.text:
+            raise ValueError("Failed to load login page.")
+
+        soup = BeautifulSoup(login_page.text, "html.parser")
+
+        # Attempt to find secretcode 
+        secretcode = None
+        secret_input = soup.find("input", {"name": "secretcode"}) \
+            or soup.find("input", {"id": "secretcode"})
+
+        if secret_input and secret_input.get("value"):
+            secretcode = secret_input.get("value")
+
+        payload = {
+            "username": username,
+            "password": password,
+        }
+
+        if secretcode:
+            payload["secretcode"] = secretcode
+
+        session.headers.update({
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Origin": BASE_URL.rstrip("/"),
+            "Referer": BASE_URL,
+        })
+
+        res = session.post(
+            BASE_URL,
+            data=payload,
+            timeout=15,
+            allow_redirects=True
+        )
+
+        if res.status_code != 200:
+            raise ValueError("Login request failed.")
+
+        # Success condition
+        if "studenthome.php" not in res.url.lower():
+            raise ValueError("Login failed. Check username or password.")
+
+        return session
+
+    except requests.exceptions.RequestException as e:
+        raise ValueError(f"Network error: {str(e)}")
+
+# --------------------------------------------------
+# STUDENT DETAILS
+# --------------------------------------------------
 def get_student_details(session: requests.Session) -> dict:
-    home_res = session.get(BASE_URL + "studenthome.php")
+    home_res = session.get(BASE_URL + "studenthome.php", timeout=10)
+
+    if home_res.status_code != 200 or not home_res.text:
+        raise ValueError("Failed to load student home page.")
+
     soup = BeautifulSoup(home_res.text, "html.parser")
-    
     details = {}
+
     for card in soup.find_all("div", class_="card"):
         header = card.find("div", class_="card-header")
-        if header and "My Details" in header.get_text(strip=True):
+        if header and "My Details" in header.text:
             for li in card.find_all("li", class_="list-group-item"):
-                key = li.find("strong").get_text(strip=True).replace(":", "")
-                value = li.get_text(strip=True).replace(li.find("strong").get_text(), "").strip()
-                details[key] = value
+                strong = li.find("strong")
+                if strong:
+                    key = strong.text.replace(":", "").strip()
+                    value = li.text.replace(strong.text, "").strip()
+                    details[key] = value
             break
-    
-    details["student_id"] = soup.find("input", {"name": "student_id"})["value"]
-    details["class_id"] = soup.find("input", {"name": "class_id"})["value"]
-    details["classname"] = soup.find("input", {"name": "classname"})["value"]
-    details["acad_year"] = soup.find("input", {"name": "acad_year"})["value"]
-    
+
+    def _get_input(*names):
+        for n in names:
+            el = soup.find("input", {"name": n})
+            if el and el.get("value"):
+                return el.get("value")
+        return None
+
+    details["student_id"] = _get_input("roll_no", "student_id", "admission")
+    details["class_id"] = _get_input("class_id")
+    details["classname"] = _get_input("classname")
+    details["acad_year"] = _get_input("acad_year")
+
+    details.setdefault("Role", "Student")
     return details
 
+# --------------------------------------------------
+# SUBJECTS
+# --------------------------------------------------
 def get_subjects(session: requests.Session, student_info: dict) -> list:
     payload = {
-        "student_id": student_info["student_id"],
-        "class_id": student_info["class_id"],
-        "classname": student_info["classname"],
-        "acad_year": student_info["acad_year"]
+        "student_id": student_info.get("student_id"),
+        "class_id": student_info.get("class_id"),
+        "classname": student_info.get("classname"),
+        "acad_year": student_info.get("acad_year"),
     }
-    res = session.post(BASE_URL + "studentsubjects.php", data=payload)
+
+    res = session.post(BASE_URL + "studentsubjects.php", data=payload, timeout=15)
+    if not res.text:
+        return []
+
     soup = BeautifulSoup(res.text, "html.parser")
-    
     subjects = []
-    for form in soup.find_all("form", {"id": True}):
-        subject_data = {}
-        for inp in form.find_all("input", {"type": "hidden"}):
-            subject_data[inp["name"]] = inp.get("value", "")
-        subjects.append(subject_data)
-    
+
+    for form in soup.find_all("form"):
+        data = {}
+        for inp in form.find_all("input"):
+            if inp.get("name"):
+                data[inp["name"]] = inp.get("value", "")
+        subjects.append(data)
+
     return subjects
 
+# --------------------------------------------------
+# DATAFRAME
+# --------------------------------------------------
 class SimpleDataFrame:
-    
     def __init__(self, data):
-        self.data = data
-    
+        self.data = data if isinstance(data, list) else []
+
     def to_dict(self, orient="records"):
-        if orient == "records":
-            return self.data
         return self.data
-    
-    def __getitem__(self, key):
-        return [row[key] for row in self.data]
-    
-    def sum_column(self, column):
-        # Only sum numeric values, skip "N/A" or non-numeric entries
-        return sum(row[column] for row in self.data if isinstance(row[column], (int, float)))
+
+# --------------------------------------------------
+# ATTENDANCE
+# --------------------------------------------------
+def fetch_single_attendance(session, payload):
+    try:
+        res = session.post(BASE_URL + "studentsubatt.php", data=payload)
+        soup = BeautifulSoup(res.text, "html.parser")
+        table = soup.find("table", class_="table")
+
+        if not table:
+            raise ValueError
+
+        records = []
+        for row in table.find_all("tr"):
+            cols = row.find_all("td")
+            if len(cols) >= 3:
+                records.append({
+                    "date": cols[0].text.strip(),
+                    "status": cols[2].text.strip()
+                })
+
+        total = len(records)
+        present = sum(1 for r in records if r["status"] == "Present")
+
+        return {
+            "Subject": payload.get("sub_fullname", "Unknown"),
+            "Start Date":records[0]["date"],
+            "End Date":records[-1]["date"],
+            "Total Days": total,
+            "No. of Present": present,
+            "No. of Absent": total - present,
+            "Attendance %": round((present / total) * 100, 1) if total else 0,
+            "Details": records,
+        }
+
+    except Exception:
+        return {
+            "Subject": payload.get("sub_fullname", "Unknown"),
+            "Start Date":"",
+            "End Date":"",
+            "Total Days": 0,
+            "No. of Present": 0,
+            "No. of Absent": 0,
+            "Attendance %": 0,
+            "Details": [],
+        }
 
 def fetch_attendance(session: requests.Session, subjects: list):
-    all_summaries = []
+    if not subjects:
+        return SimpleDataFrame([])
 
-    for att_payload in subjects:
-        att_res = session.post(BASE_URL + "studentsubatt.php", data=att_payload)
-        soup = BeautifulSoup(att_res.text, "html.parser")
-        table = soup.find("table", class_="table table-bordered table-striped")
-        
-        if table:
-            records = []
-            for row in table.select("tbody tr"):
-                cols = row.find_all("td")
-                if not cols:
-                    continue
-                records.append((cols[0].get_text(strip=True), cols[2].get_text(strip=True)))
-            
-            dates, statuses = [], []
-            for date_str, status in records:
-                try:
-                    date_obj = datetime.strptime(date_str, "%d-%m-%Y")
-                    dates.append(date_obj)
-                    statuses.append(status)
-                except ValueError:
-                    continue
-            
-            total_days = len(statuses)
-            present_count = sum(1 for status in statuses if status == "Present")
-            absent_count = total_days - present_count
-            attendance_pct = round((present_count / total_days) * 100, 1) if total_days > 0 else 0
+    results = []
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        futures = [
+            executor.submit(fetch_single_attendance, session, s)
+            for s in subjects if isinstance(s, dict)
+        ]
+        for f in concurrent.futures.as_completed(futures):
+            results.append(f.result())
 
-            end_date_str = max(dates).strftime("%d-%m-%Y") if dates else None
-            end_date_warning = False
-            if end_date_str:
-                try:
-                    end_date_obj = datetime.strptime(end_date_str, "%d-%m-%Y")
-                    days_diff = (datetime.now() - end_date_obj).days
-                    if days_diff > 30:
-                        end_date_warning = True
-                except Exception:
-                    pass
-            summary = {
-                "Subject": att_payload.get("sub_fullname", "Unknown"),
-                "Start Date": min(dates).strftime("%d-%m-%Y") if dates else None,
-                "End Date": end_date_str,
-                "Total Days": total_days if dates else 0,
-                "No. of Present": present_count if dates else 0,
-                "No. of Absent": absent_count if dates else 0,
-                "Attendance %": attendance_pct if dates else 0,
-                "End Date Warning": end_date_warning
-            }
-        else:
-            # If table not found, store None/0 values
-            summary = {
-                "Subject": att_payload.get("sub_fullname", "Unknown"),
-                "Start Date": None,
-                "End Date": None,
-                "Total Days": 0,
-                "No. of Present": 0,
-                "No. of Absent": 0,
-                "Attendance %": 0,
-                "End Date Warning": False
-            }
-        
-        all_summaries.append(summary)
-    
-    return SimpleDataFrame(all_summaries)
+    return SimpleDataFrame(results)

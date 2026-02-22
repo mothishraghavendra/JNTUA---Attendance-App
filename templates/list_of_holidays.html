@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Long Weekends 2026 — JNTUA</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #F4F6F9;
+      --card:     #FFFFFF;
+      --border:   #E5E9F0;
+      --ink:      #1A1F2E;
+      --ink-soft: #374151;
+      --muted:    #8892A0;
+      --rule:     #EEF0F5;
+      --ugadi:    #D97706;
+      --rama:     #C026D3;
+      --gf:       #2563EB;
+      --gandhi:   #059669;
+      --xmas:     #7C3AED;
+      --holi:     #DB2777;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 28px 16px 60px;
+    }
+
+    /* ── BACK ── */
+    .back-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      margin-bottom: 24px;
+      transition: color 0.15s;
+    }
+    .back-top:hover { color: var(--ink); }
+
+    /* ── HEADER ── */
+    .site-header {
+      margin-bottom: 36px;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .eyebrow-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #22C55E;
+      animation: blink 2s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.25; }
+    }
+
+    h1 {
+      font-size: clamp(1.55rem, 5vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .sub {
+      font-size: 0.86rem;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 480px;
+    }
+
+    .stat-row {
+      display: flex;
+      gap: 20px;
+      margin-top: 22px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .stat { display: flex; flex-direction: column; gap: 2px; }
+
+    .stat-val {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -0.5px;
+      line-height: 1;
+      transition: all 0.3s;
+    }
+
+    .stat-label {
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .stat-sep { width: 1px; height: 26px; background: var(--border); align-self: center; }
+
+    /* ── SECTION HEADING ── */
+    .section-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      animation: fadeUp 0.5s 0.05s both;
+    }
+
+    .sh-label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .sh-line { flex: 1; height: 1px; background: var(--border); }
+
+    .sh-badge {
+      font-size: 0.64rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 20px;
+      white-space: nowrap;
+      transition: all 0.3s;
+    }
+
+    .sh-badge-green { background: #F0FDF4; color: #15803D; border: 1px solid #BBF7D0; }
+    .sh-badge-red   { background: #FFF1F2; color: #9F1239; border: 1px solid #FECDD3; }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      margin-bottom: 10px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.07);
+    }
+
+    .card-bar { width: 4px; flex-shrink: 0; }
+
+    .card-inner {
+      flex: 1;
+      padding: 16px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .date-block {
+      flex-shrink: 0;
+      width: 52px;
+      text-align: center;
+    }
+
+    .date-mo {
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1px;
+    }
+
+    .date-num {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+
+    .vr { width: 1px; align-self: stretch; background: var(--rule); flex-shrink: 0; }
+
+    .card-content {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .hname { font-size: 0.93rem; font-weight: 700; color: var(--ink); }
+
+    .days-row { display: flex; gap: 4px; flex-wrap: wrap; }
+
+    .pill {
+      font-size: 0.66rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 5px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--ink-soft);
+      white-space: nowrap;
+    }
+
+    .pill-main {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 5px;
+    }
+
+    .card-right {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 5px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.66rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .span-txt { font-size: 0.63rem; color: var(--muted); font-weight: 500; }
+
+    /* ── SMART CARD ── */
+    .smart-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      margin-bottom: 10px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      animation: fadeUp 0.5s 0.32s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    .smart-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.07);
+    }
+
+    .smart-inner {
+      flex: 1;
+      padding: 16px 16px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .leave-box {
+      flex-shrink: 0;
+      width: 48px; height: 48px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.54rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      line-height: 1.3;
+      text-align: center;
+    }
+
+    .leave-num { font-size: 1.1rem; font-weight: 800; line-height: 1; }
+
+    .smart-body { flex: 1; min-width: 0; }
+
+    .smart-title { font-size: 0.93rem; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+
+    .smart-desc { font-size: 0.75rem; color: var(--muted); line-height: 1.55; margin-bottom: 10px; }
+
+    .flow-row { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+
+    .flow-pill {
+      font-size: 0.66rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 5px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--ink-soft);
+      white-space: nowrap;
+    }
+
+    .flow-arrow { color: var(--muted); font-size: 8px; }
+
+    /* ── ALL DONE STATE ── */
+    .all-done {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 32px 20px;
+      text-align: center;
+      display: none;
+      margin-bottom: 10px;
+    }
+
+    .all-done-icon { font-size: 2rem; margin-bottom: 10px; }
+    .all-done-title { font-size: 0.95rem; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .all-done-sub { font-size: 0.78rem; color: var(--muted); }
+
+    /* ── TIP ── */
+    .tip-box {
+      margin-top: 30px;
+      padding: 14px 16px;
+      background: #F0FDF4;
+      border: 1px solid #BBF7D0;
+      border-radius: 12px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      animation: fadeUp 0.5s 0.4s both;
+    }
+
+    .tip-icon {
+      flex-shrink: 0;
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      background: #22C55E;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      font-size: 12px;
+    }
+
+    .tip-title { font-size: 0.78rem; font-weight: 700; color: #14532D; margin-bottom: 3px; }
+    .tip-text  { font-size: 0.73rem; color: #166534; line-height: 1.6; }
+
+    /* ── FOOTER ── */
+    .site-footer {
+      text-align: center;
+      margin-top: 36px;
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+
+    /* ── ANIMATION ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card:nth-child(1) { animation-delay: 0.06s; }
+    .card:nth-child(2) { animation-delay: 0.11s; }
+    .card:nth-child(3) { animation-delay: 0.16s; }
+    .card:nth-child(4) { animation-delay: 0.21s; }
+    .card:nth-child(5) { animation-delay: 0.26s; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 480px) {
+      .card-right { display: none; }
+      .date-block {
+        display: flex;
+        flex-direction: row;
+        align-items: baseline;
+        gap: 4px;
+        width: auto;
+        flex-shrink: 0;
+      }
+      .date-mo { margin-bottom: 0; }
+      .date-num { font-size: 1rem; }
+      .hname { font-size: 0.88rem; }
+      .pill-main { font-size: 0.64rem; white-space: normal; word-break: break-word; }
+      .pill { font-size: 0.63rem; padding: 2px 7px; }
+      .smart-inner > div:last-child { display: none; }
+      .smart-title { font-size: 0.88rem; }
+      .smart-desc { font-size: 0.71rem; }
+      .flow-pill { font-size: 0.62rem; padding: 3px 6px; }
+      h1 { font-size: 1.5rem; }
+      .stat-val { font-size: 1.25rem; }
+      .tip-box { padding: 12px 14px; }
+      .tip-title { font-size: 0.75rem; }
+      .tip-text { font-size: 0.7rem; }
+    }
+
+    @media (min-width: 481px) and (max-width: 600px) {
+      .card-right { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <button class="back-top" onclick="history.back()">
+    <i class="fas fa-arrow-left" style="font-size:10px;"></i> Back
+  </button>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="eyebrow">
+      <span class="eyebrow-dot"></span>
+      JNTUA · 2026 Holiday Calendar
+    </div>
+    <h1>Long Weekends<br>to Plan For</h1>
+    <p class="sub">Every 3-day stretch this year with zero leaves, plus smart extensions that cost just one leave each.</p>
+  </header>
+
+  <!-- FREE SECTION -->
+  <div class="section-head" id="free-head">
+    <span class="sh-label">No Leave Required</span>
+    <div class="sh-line"></div>
+    <span class="sh-badge sh-badge-green" id="free-badge">⭐ 3 days each</span>
+  </div>
+
+  <div id="free-all-done" class="all-done">
+    <div class="all-done-icon">🎉</div>
+    <div class="all-done-title">All free breaks have passed!</div>
+    <div class="all-done-sub">No more free long weekends for 2026. See you next year!</div>
+  </div>
+
+  <!-- Ugadi / Eid-ul-Fitr — Mar 20 Fri -->
+  <div class="card" data-end="2026-03-22" data-section="free">
+    <div class="card-bar" style="background:var(--ugadi);"></div>
+    <div class="card-inner">
+      <div class="date-block">
+        <div class="date-mo">Mar</div>
+        <div class="date-num" style="color:var(--ugadi);">20–22</div>
+      </div>
+      <div class="vr"></div>
+      <div class="card-content">
+        <div class="hname">Ugadi &amp; Eid-ul-Fitr</div>
+        <div class="days-row">
+          <span class="pill-main" style="background:#FFFBEB; border:1px solid #FDE68A; color:var(--ugadi);">Fri Mar 20 — Ugadi / Eid-ul-Fitr</span>
+          <span class="pill">Sat Mar 21</span>
+          <span class="pill">Sun Mar 22</span>
+        </div>
+      </div>
+      <div class="card-right">
+        <div class="chip" style="background:#FFFBEB; color:var(--ugadi); border:1px solid #FDE68A;">
+          <i class="fas fa-calendar-check" style="font-size:8px;"></i> 3-Day Break
+        </div>
+        <span class="span-txt">Fri – Sun</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ram Navami — Mar 27 Fri -->
+  <div class="card" data-end="2026-03-29" data-section="free">
+    <div class="card-bar" style="background:var(--rama);"></div>
+    <div class="card-inner">
+      <div class="date-block">
+        <div class="date-mo">Mar</div>
+        <div class="date-num" style="color:var(--rama);">27–29</div>
+      </div>
+      <div class="vr"></div>
+      <div class="card-content">
+        <div class="hname">Sri Rama Navami</div>
+        <div class="days-row">
+          <span class="pill-main" style="background:#FDF4FF; border:1px solid #E9D5FF; color:var(--rama);">Fri Mar 27 — Sri Rama Navami</span>
+          <span class="pill">Sat Mar 28</span>
+          <span class="pill">Sun Mar 29</span>
+        </div>
+      </div>
+      <div class="card-right">
+        <div class="chip" style="background:#FDF4FF; color:var(--rama); border:1px solid #E9D5FF;">
+          <i class="fas fa-calendar-check" style="font-size:8px;"></i> 3-Day Break
+        </div>
+        <span class="span-txt">Fri – Sun</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Good Friday — Apr 3 Fri -->
+  <div class="card" data-end="2026-04-05" data-section="free">
+    <div class="card-bar" style="background:var(--gf);"></div>
+    <div class="card-inner">
+      <div class="date-block">
+        <div class="date-mo">Apr</div>
+        <div class="date-num" style="color:var(--gf);">3–5</div>
+      </div>
+      <div class="vr"></div>
+      <div class="card-content">
+        <div class="hname">Good Friday</div>
+        <div class="days-row">
+          <span class="pill-main" style="background:#EFF6FF; border:1px solid #BFDBFE; color:var(--gf);">Fri Apr 3 — Good Friday</span>
+          <span class="pill">Sat Apr 4</span>
+          <span class="pill">Sun Apr 5</span>
+        </div>
+      </div>
+      <div class="card-right">
+        <div class="chip" style="background:#EFF6FF; color:var(--gf); border:1px solid #BFDBFE;">
+          <i class="fas fa-calendar-check" style="font-size:8px;"></i> 3-Day Break
+        </div>
+        <span class="span-txt">Fri – Sun</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gandhi Jayanti — Oct 2 Fri -->
+  <div class="card" data-end="2026-10-04" data-section="free">
+    <div class="card-bar" style="background:var(--gandhi);"></div>
+    <div class="card-inner">
+      <div class="date-block">
+        <div class="date-mo">Oct</div>
+        <div class="date-num" style="color:var(--gandhi);">2–4</div>
+      </div>
+      <div class="vr"></div>
+      <div class="card-content">
+        <div class="hname">Gandhi Jayanti</div>
+        <div class="days-row">
+          <span class="pill-main" style="background:#F0FDF4; border:1px solid #BBF7D0; color:var(--gandhi);">Fri Oct 2 — Gandhi Jayanti</span>
+          <span class="pill">Sat Oct 3</span>
+          <span class="pill">Sun Oct 4</span>
+        </div>
+      </div>
+      <div class="card-right">
+        <div class="chip" style="background:#F0FDF4; color:var(--gandhi); border:1px solid #BBF7D0;">
+          <i class="fas fa-calendar-check" style="font-size:8px;"></i> 3-Day Break
+        </div>
+        <span class="span-txt">Fri – Sun</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Christmas — Dec 25 Fri -->
+  <div class="card" data-end="2026-12-27" data-section="free">
+    <div class="card-bar" style="background:var(--xmas);"></div>
+    <div class="card-inner">
+      <div class="date-block">
+        <div class="date-mo">Dec</div>
+        <div class="date-num" style="color:var(--xmas);">25–27</div>
+      </div>
+      <div class="vr"></div>
+      <div class="card-content">
+        <div class="hname">Christmas</div>
+        <div class="days-row">
+          <span class="pill-main" style="background:#F5F3FF; border:1px solid #DDD6FE; color:var(--xmas);">Fri Dec 25 — Christmas</span>
+          <span class="pill">Sat Dec 26</span>
+          <span class="pill">Sun Dec 27</span>
+        </div>
+      </div>
+      <div class="card-right">
+        <div class="chip" style="background:#F5F3FF; color:var(--xmas); border:1px solid #DDD6FE;">
+          <i class="fas fa-calendar-check" style="font-size:8px;"></i> 3-Day Break
+        </div>
+        <span class="span-txt">Fri – Sun</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SMART SECTION -->
+  <div class="section-head" id="smart-head" style="margin-top:36px;">
+    <span class="sh-label">1 Leave Required</span>
+    <div class="sh-line"></div>
+    <span class="sh-badge sh-badge-red" id="smart-badge">⚠️ Smart Extensions</span>
+  </div>
+
+  <div id="smart-all-done" class="all-done">
+    <div class="all-done-icon">✅</div>
+    <div class="all-done-title">All smart breaks have passed!</div>
+    <div class="all-done-sub">No more smart extensions left for 2026.</div>
+  </div>
+
+  <!-- Republic Day — Jan 26 Mon → take Fri Jan 23 leave → 4 days (PAST) -->
+  <!-- Already past as of Feb 22 2026, JS will remove it -->
+  <div class="smart-card" data-end="2026-01-26" data-section="smart">
+    <div class="card-bar" style="background:#3B82F6;"></div>
+    <div class="smart-inner">
+      <div class="leave-box" style="background:#EFF6FF; border:1px solid #BFDBFE; color:#2563EB;">
+        <span class="leave-num">1</span>
+        <span>Leave</span>
+      </div>
+      <div class="smart-body">
+        <div class="smart-title">Republic Day Window</div>
+        <div class="smart-desc">Republic Day is <strong>Monday, Jan 26</strong>. Take leave on <strong>Friday, Jan 23</strong> to get a 4-day stretch — Fri to Mon.</div>
+        <div class="flow-row">
+          <span class="flow-pill" style="background:#EFF6FF; border-color:#BFDBFE; color:#2563EB;">Fri Jan 23 — Leave</span>
+          <i class="fas fa-chevron-right flow-arrow"></i>
+          <span class="flow-pill">Sat Jan 24</span>
+          <i class="fas fa-chevron-right flow-arrow"></i>
+          <span class="flow-pill">Sun Jan 25</span>
+          <i class="fas fa-chevron-right flow-arrow"></i>
+          <span class="flow-pill" style="background:#EFF6FF; border-color:#BFDBFE; color:#2563EB;">Mon Jan 26 — Republic Day</span>
+        </div>
+      </div>
+      <div style="flex-shrink:0; display:flex; flex-direction:column; align-items:flex-end; gap:5px; padding-left:6px;">
+        <div class="chip" style="background:#EFF6FF; color:#2563EB; border:1px solid #BFDBFE;">
+          <i class="fas fa-bolt" style="font-size:8px;"></i> 4-Day Stretch
+        </div>
+        <span class="span-txt">Fri – Mon</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Holi — Mar 3 Tue → take Mon Mar 2 leave -->
+  <!-- Also past as of Feb 22, but very close — JS handles it -->
+  <div class="smart-card" data-end="2026-03-03" data-section="smart">
+    <div class="card-bar" style="background:var(--holi);"></div>
+    <div class="smart-inner">
+      <div class="leave-box" style="background:#FFF1F2; border:1px solid #FECDD3; color:var(--holi);">
+        <span class="leave-num">1</span>
+        <span>Leave</span>
+      </div>
+      <div class="smart-body">
+        <div class="smart-title">Holi Window</div>
+        <div class="smart-desc">Holi falls on <strong>Tuesday, Mar 3</strong>. Take leave on <strong>Monday, Mar 2</strong> — combine with the weekend before for a 3-day Sat–Tue stretch.</div>
+        <div class="flow-row">
+          <span class="flow-pill">Sun Mar 1</span>
+          <i class="fas fa-chevron-right flow-arrow"></i>
+          <span class="flow-pill" style="background:#FFF1F2; border-color:#FECDD3; color:var(--holi);">Mon Mar 2 — Leave</span>
+          <i class="fas fa-chevron-right flow-arrow"></i>
+          <span class="flow-pill" style="background:#FFF1F2; border-color:#FECDD3; color:var(--holi);">Tue Mar 3 — Holi</span>
+        </div>
+      </div>
+      <div style="flex-shrink:0; display:flex; flex-direction:column; align-items:flex-end; gap:5px; padding-left:6px;">
+        <div class="chip" style="background:#FFF1F2; color:var(--holi); border:1px solid #FECDD3;">
+          <i class="fas fa-bolt" style="font-size:8px;"></i> 3-Day Stretch
+        </div>
+        <span class="span-txt">Sat – Tue</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIP -->
+  <div class="tip-box">
+    <div class="tip-icon"><i class="fas fa-lightbulb"></i></div>
+    <div>
+      <div class="tip-title">Quick Tip</div>
+      <p class="tip-text">All 5 free breaks fall on <strong>Fridays</strong> — no leave needed. For smart extensions, apply leave at least 2 weeks ahead. Book trains and stays early, especially for the March cluster where three long weekends fall back-to-back!</p>
+    </div>
+  </div>
+
+  <div class="site-footer">JNTUA Attendance App &nbsp;·&nbsp; 2026 &nbsp;·&nbsp; Plan smart.</div>
+
+</div>
+
+<script>
+  (function () {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    function parseDate(str) {
+      // "YYYY-MM-DD" → local midnight, safe cross-browser
+      const parts = str.split('-');
+      return new Date(+parts[0], +parts[1] - 1, +parts[2]);
+    }
+
+    function isExpired(dateStr) {
+      // A weekend is expired when its LAST day (data-end) is strictly before today
+      return parseDate(dateStr) < today;
+    }
+
+    function animateOut(el) {
+      return new Promise(resolve => {
+        // Snapshot height before any transition
+        const h = el.getBoundingClientRect().height;
+        el.style.overflow  = 'hidden';
+        el.style.maxHeight = h + 'px';
+        el.style.opacity   = '1';
+        el.style.marginBottom = '10px';
+
+        // Force browser to acknowledge the starting state
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            el.style.transition   = 'opacity 0.3s ease, max-height 0.35s ease, margin-bottom 0.35s ease';
+            el.style.opacity      = '0';
+            el.style.maxHeight    = '0px';
+            el.style.marginBottom = '0px';
+
+            el.addEventListener('transitionend', () => {
+              el.remove();
+              resolve();
+            }, { once: true });
+
+            // Safety fallback in case transitionend never fires
+            setTimeout(resolve, 450);
+          });
+        });
+      });
+    }
+
+    function refreshCounts() {
+      // ── Free section ──
+      const freeLeft = document.querySelectorAll('[data-section="free"]').length;
+      const statEl   = document.getElementById('stat-remaining');
+      const badgeEl  = document.getElementById('free-badge');
+      const freeDone = document.getElementById('free-all-done');
+
+      if (statEl)  statEl.textContent = freeLeft;
+
+      if (freeLeft === 0) {
+        if (freeDone) freeDone.style.display = 'block';
+        if (badgeEl)  badgeEl.textContent    = '— all done';
+      } else {
+        if (badgeEl) badgeEl.textContent = `⭐ ${freeLeft} remaining`;
+      }
+
+      // ── Smart section ──
+      const smartLeft  = document.querySelectorAll('[data-section="smart"]').length;
+      const smartDone  = document.getElementById('smart-all-done');
+      const smartBadge = document.getElementById('smart-badge');
+
+      if (smartLeft === 0) {
+        if (smartDone)  smartDone.style.display = 'block';
+        if (smartBadge) smartBadge.textContent  = '— all done';
+      } else {
+        if (smartBadge) smartBadge.textContent = `⚠️ ${smartLeft} remaining`;
+      }
+    }
+
+    // Collect expired cards, animate them all out in parallel, then refresh
+    const expired = Array.from(document.querySelectorAll('[data-end]'))
+                         .filter(el => isExpired(el.dataset.end));
+
+    if (expired.length === 0) {
+      // Nothing to remove — just update badge counts
+      refreshCounts();
+    } else {
+      Promise.all(expired.map(animateOut)).then(refreshCounts);
+    }
+
+  })();
+</script>
+
+</body>
+</html>

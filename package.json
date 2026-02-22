@@ -1,0 +1,13 @@
+{
+  "name": "jntua-attendance-app",
+  "version": "1.0.0",
+  "description": "JNTUA Attendance App",
+  "scripts": {
+    "build-css": "tailwindcss -i ./static/src/input.css -o ./static/css/output.css --minify",
+    "watch-css": "tailwindcss -i ./static/src/input.css -o ./static/css/output.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0"
+  }
+}
+
