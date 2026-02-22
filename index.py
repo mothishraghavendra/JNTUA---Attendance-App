@@ -274,6 +274,9 @@ Message:
 def contributors():
     return render_template("contributors.html")
 
+@app.route("/loh")
+def list_of_holidays():
+    return render_template("list_of_holidays.html")
 
 @app.route("/api/attendance")
 def api_attendance():
