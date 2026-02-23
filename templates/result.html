@@ -166,6 +166,7 @@
     /* ── ACTION BUTTONS ── */
     .action-row {
       display: flex;
+      justify-content: center;
       gap: 8px;
       flex-wrap: wrap;
       margin-bottom: 32px;
@@ -193,6 +194,8 @@
     .btn-purple:hover { background: #6D28D9; border-color: #6D28D9; }
     .btn-red    { background: var(--red); color: #fff; border-color: var(--red); }
     .btn-red:hover    { background: #B91C1C; border-color: #B91C1C; }
+    .btn-green  { background: var(--green); color: #fff; border-color: var(--green); }
+    .btn-green:hover { background: #047857; border-color: #047857; }
 
     /* ── SECTION HEADING ── */
     .section-head {
@@ -539,6 +542,12 @@
       .subj-name  { font-size: 0.82rem; }
       .stat-val   { font-size: 1.15rem; }
       .header-text h1 { font-size: 1.35rem; }
+      .action-row { gap: 4px; }
+      .action-row a {
+        flex: 1 1 45%;
+        max-width: 45%;
+        text-align: center;
+      }
     }
   </style>
 </head>
@@ -597,7 +606,15 @@
     <a href="/contributors" class="btn">
       <i class="fas fa-users" style="font-size:10px;"></i> Contributors
     </a>
+    <a href="/download-apk" class="btn btn-green" onclick="return confirm('Installation Note\n\n' +
+                               'Android may show a warning when installing this app.\n' +
+                               'This is a normal system message for apps not downloaded from the Play Store.\n\n' +
+                               'Simply allow installation from this source and continue.\n' +
+                               'The app is safe to install and use.');">
+      <i class="fas fa-download" style="font-size:10px;"></i> Download Android App
+    </a>
   </div>
+
   <main>
   <!-- SECTION HEAD -->
   <div class="section-head">

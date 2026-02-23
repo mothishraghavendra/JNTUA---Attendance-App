@@ -318,17 +318,26 @@ def sitemap():
     <lastmod>2026-02-09</lastmod>
     <priority>1.0</priority>
   </url>
-
-
   <url>
     <loc>https://jntua-attendance-app.vercel.app/contact</loc>
     <lastmod>2026-02-09</lastmod>
     <priority>0.8</priority>
   </url>
-
 </urlset>
 """
     return Response(xml, mimetype="application/xml")
+
+
+
+# --- Android APK download route ------------------------------------------------
+# Place the production APK file in `static/apk/` (e.g. jntua-attendance.apk).
+# The download link/button on the website will point here; clicking it
+# will trigger a direct file download. No authentication or extra logic is used.
+@app.route("/download-apk")
+def download_apk():
+    # the filename should match the actual APK you put in the folder
+    return send_from_directory("static/apk", "jntua-attendance.apk", as_attachment=True)
+
 
 
 @app.route("/icon.png")
