@@ -674,7 +674,7 @@
             <span class="pill pill-green">✓ {{ row['No. of Present'] }} present</span>
             <span class="pill pill-red">✗ {{ row['No. of Absent'] }} absent</span>
             {% if row['Can Skip'] and row['Can Skip'] != 'Cannot skip' and row['Can Skip'] > 0 %}
-              <span class="pill pill-green">Skip {{ row['Can Skip'] }}</span>
+              <span class="pill pill-green">Can Skip {{ row['Can Skip'] }}</span>
             {% elif row['Can Skip'] == 'Cannot skip' or (row['Attendance %'] != 'N/A' and pct < 75) %}
               <span class="pill pill-red">Cannot skip</span>
             {% endif %}
@@ -779,7 +779,8 @@
       .then(r => r.json())
       .then(data => {
         if (data && data.details && data.details.length > 0) {
-          let rows = data.details.map((d, i) => {
+          // Reverse the array to show latest dates first (stack order)
+          let rows = [...data.details].reverse().map((d, i) => {
             const present = d.status.toLowerCase() === 'present';
             return `<div class="modal-row">
               <span class="modal-date">${d.date}</span>

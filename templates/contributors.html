@@ -3,109 +3,473 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" sizes="180x180" href="icon.png">
     <title>Contributors - JNTUA Attendance</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/output.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
     <style>
-        /* contributor card links styling */
-        .contributor-link { display: block; text-decoration: none; color: inherit; }
-        .contributor-link:focus { outline: 2px solid rgba(124,58,237,0.25); outline-offset: 2px; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #F4F6F9;
+      --card:      #FFFFFF;
+      --border:    #E5E9F0;
+      --ink:       #1A1F2E;
+      --ink-soft:  #374151;
+      --muted:     #8892A0;
+      --rule:      #EEF0F5;
+      --green:     #059669;
+      --red:       #DC2626;
+      --amber:     #D97706;
+      --blue:      #2563EB;
+      --purple:    #7C3AED;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 16px 60px;
+      flex: 1;
+    }
+
+    /* ── BACK ── */
+    .back-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      margin-bottom: 24px;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .back-top:hover { color: var(--ink); }
+
+    /* ── HEADER ── */
+    .site-header {
+      margin-bottom: 36px;
+      text-align: center;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .eyebrow-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #22C55E;
+      animation: blink 2s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.25; }
+    }
+
+    .site-header h1 {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .site-header p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ── CONTRIBUTORS GRID ── */
+    .contributors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    /* ── PROFILE CARD ── */
+    .profile-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .profile-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+      border-color: var(--purple);
+    }
+
+    .profile-banner {
+      height: 100px;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      position: relative;
+    }
+
+    .profile-content {
+      padding: 0 24px 24px;
+      text-align: center;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      margin-top: -50px;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 4px solid var(--card);
+      background: linear-gradient(135deg, #7C3AED, #2563EB);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.3);
+      object-fit: cover;
+    }
+
+    .profile-name {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+    }
+
+    .profile-role {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--purple);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+
+    .profile-bio {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 20px;
+      min-height: 40px;
+    }
+
+    .profile-divider {
+      width: 100%;
+      height: 1px;
+      background: var(--border);
+      margin: 16px 0;
+    }
+
+    .profile-stats {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .stat-val {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -0.5px;
+    }
+
+    .stat-label {
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .social-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: var(--muted);
+      transition: all 0.2s;
+      font-size: 1rem;
+    }
+
+    .social-btn:hover {
+      background: var(--purple);
+      color: white;
+      border-color: var(--purple);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+    }
+
+    /* ── CTA SECTION ── */
+    .cta-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px 32px;
+      text-align: center;
+      animation: fadeUp 0.5s 0.2s both;
+    }
+
+    .cta-section h2 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .cta-section p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto 24px;
+      line-height: 1.6;
+    }
+
+    .github-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      background: var(--purple);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border: 1px solid var(--purple);
+      transition: all 0.2s;
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3);
+    }
+
+    .github-btn:hover {
+      background: #6D28D9;
+      border-color: #6D28D9;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      color: #D1D5DB;
+      margin-top: auto;
+      padding: 24px 16px;
+      text-align: center;
+      font-size: 0.82rem;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .contributors-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-avatar {
+        width: 90px;
+        height: 90px;
+        font-size: 2rem;
+      }
+
+      .avatar-wrapper {
+        margin-top: -45px;
+      }
+    }
     </style>
-<!-- google adsense ad code  -->
- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9831921446818794"
-     crossorigin="anonymous"></script>
 </head>
-<body class="bg-gray-100 flex flex-col min-h-screen" style="font-family: 'Inter', sans-serif;">
+<body>
 
-    <main class="flex-grow p-4 sm:p-6 md:p-8">
-        <div class="max-w-3xl mx-auto">
-            <div class="bg-white rounded-2xl shadow-lg p-6 sm:p-8 md:p-10 border border-gray-100 animate__animated animate__fadeInUp">
-                <!-- Back Button -->
-                <div class="mb-4">
-                    <button onclick="history.back()" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium text-sm transition-colors">
-                        <i class="fas fa-arrow-left"></i>
-                        <span>Back</span>
-                    </button>
-                </div>
+<div class="page">
 
-                <!-- Header -->
-                <div class="text-center mb-8 animate__animated animate__fadeInDown">
-                    <div class="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4 transform hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-users text-2xl text-purple-600"></i>
-                    </div>
-                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Contributors</h1>
-                    <p class="text-sm sm:text-base text-gray-600">Meet the team behind the JNTUA Attendance App</p>
-                </div>
+  <a href="javascript:history.back()" class="back-top">
+    <i class="fas fa-arrow-left" style="font-size:10px;"></i> Back
+  </a>
 
-                <!-- Contributors Grid -->
-                <div class="flex flex-col sm:flex-row flex-wrap justify-center gap-4 sm:gap-6 md:gap-8">
-                    <!-- Contributor Card 1 - Chanikya WebDev -->
-                    <a href="https://www.linkedin.com/in/chanikya-j" target="_blank" rel="noopener noreferrer" class="block">
-                        <div class="bg-white rounded-xl shadow-md p-4 sm:p-5 md:p-6 lg:p-8 border border-gray-200 animate__animated animate__fadeInUp w-full sm:w-auto sm:flex-1 sm:max-w-sm lg:max-w-xs hover:ring-2 hover:ring-purple-300 transition">
-                            <div class="flex flex-col items-center text-center">
-                                <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 bg-purple-600 rounded-full flex items-center justify-center text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold shadow-md mb-3 sm:mb-4">
-                                    CJ
-                                </div>
-                                <h3 class="text-base sm:text-lg md:text-xl font-bold text-gray-900 mb-1 sm:mb-2 break-words">Chanikya J</h3>
-                                <p class="text-xs sm:text-sm font-semibold text-purple-600 mb-3 sm:mb-4">Project Creator</p>
-                            </div>
-                        </div>
-                    </a>
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="eyebrow">
+      <span class="eyebrow-dot"></span>
+      JNTUA · Team
+    </div>
+    <h1>Project Contributors</h1>
+    <p>Meet the talented developers behind the JNTUA Attendance App</p>
+  </header>
 
-                    <!-- Contributor Card 2 - Suram Sathwik Reddy -->
-                    <a href="https://www.linkedin.com/in/suram-sathwik-reddy-383ab42b4?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener noreferrer" class="block">
-                        <div class="bg-white rounded-xl shadow-md p-4 sm:p-5 md:p-6 lg:p-8 border border-gray-200 animate__animated animate__fadeInUp w-full sm:w-auto sm:flex-1 sm:max-w-sm lg:max-w-xs hover:ring-2 hover:ring-purple-300 transition">
-                            <div class="flex flex-col items-center text-center">
-                                <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 bg-purple-600 rounded-full flex items-center justify-center text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold shadow-md mb-3 sm:mb-4">
-                                    SSR
-                                </div>
-                                <h3 class="text-base sm:text-lg md:text-xl font-bold text-gray-900 mb-1 sm:mb-2 break-words">Suram Sathwik</h3>
-                                <p class="text-xs sm:text-sm font-semibold text-purple-600 mb-3 sm:mb-4">Contributor</p>
-                            </div>
-                        </div>
-                    </a>
+  <!-- CONTRIBUTORS GRID -->
+  <div class="contributors-grid">
 
-                    <!-- Contributor Card 3 - Mothish Raghavendra -->
-                    <a href="https://www.linkedin.com/in/mothishraghavendra?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener noreferrer" class="block">
-                        <div class="bg-white rounded-xl shadow-md p-4 sm:p-5 md:p-6 lg:p-8 border border-gray-200 animate__animated animate__fadeInUp w-full sm:w-auto sm:flex-1 sm:max_w-sm lg:max-w-xs hover:ring-2 hover:ring-purple-300 transition">
-                            <div class="flex flex-col items-center text-center">
-                                <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 bg-purple-600 rounded-full flex items-center justify-center text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold shadow-md mb-3 sm:mb-4">
-                                    MR
-                                </div>
-                                <h3 class="text-base sm:text-lg md:text-xl font-bold text-gray-900 mb-1 sm:mb-2 break-words">Mothish Raghavendra</h3>
-                                <p class="text-xs sm:text-sm font-semibold text-purple-600 mb-3 sm:mb-4">Contributor</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Call to Action -->
-                <div class="mt-8 text-center">
-                    <h2 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 mb-2 sm:mb-3">Want to Contribute?</h2>
-                    <p class="text-xs sm:text-sm md:text-base text-gray-600 mb-4 sm:mb-6 max-w-2xl mx-auto px-2">
-                        We welcome contributions! Whether it's fixing bugs, adding features, or improving documentation, 
-                        every contribution makes a difference.
-                    </p>
-                    <a href="https://github.com/Chanikya-WebDev/JNTUA---Attendance-app" target="_blank" rel="noopener noreferrer"
-                       class="inline-flex items-center justify-center px-4 sm:px-6 py-2 sm:py-2.5 bg-purple-600 text-white font-medium text-xs sm:text-sm rounded-lg shadow-md hover:bg-purple-700 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition duration-150 ease-in-out">
-                        <i class="fab fa-github mr-2"></i>View on GitHub
-                    </a>
-                </div>
-            </div>
+    <!-- Contributor 1: Chanikya -->
+    <div class="profile-card">
+      <div class="profile-banner"></div>
+      <div class="profile-content">
+        <div class="avatar-wrapper">
+          <img src="{{ url_for('static', filename='src/chanikya.jpeg') }}"
+               alt="Chanikya J"
+               class="profile-avatar">
         </div>
-    </main>
 
-    <footer class="bg-gray-800 text-gray-300 shadow-inner mt-auto">
-        <div class="container mx-auto px-6 py-8">
-            <div class="text-center text-sm">
-                <p>&copy; 2026 JNTUA Attendance App. All Rights Reserved.</p>
-            </div>
+        <h3 class="profile-name">Chanikya J</h3>
+        <div class="profile-role">Project Creator & Lead Developer</div>
+        <p class="profile-bio">Full-stack developer passionate about creating student-centric applications.</p>
+
+        <div class="profile-divider"></div>
+
+        <div class="social-links">
+          <!-- <a href="https://www.linkedin.com/in/chanikya-j" target="_blank" class="social-btn" title="LinkedIn">
+            <i class="fab fa-linkedin-in"></i>
+          </a> -->
+          <a href="https://github.com/Chanikya-WebDev" target="_blank" class="social-btn" title="GitHub">
+            <i class="fab fa-github"></i>
+          </a>
+          <a href="mailto:jchanikya06@gmail.com" class="social-btn" title="Email">
+            <i class="fas fa-envelope"></i>
+          </a>
         </div>
-    </footer>
+      </div>
+    </div>
+
+    <!-- Contributor 2: Sathwik -->
+    <div class="profile-card">
+      <div class="profile-banner"></div>
+      <div class="profile-content">
+        <div class="avatar-wrapper">
+          <img src="{{ url_for('static', filename='src/sathwik.jpeg') }}"
+               alt="Suram Sathwik"
+               class="profile-avatar">
+        </div>
+
+        <h3 class="profile-name">Suram Sathwik Reddy</h3>
+        <div class="profile-role">Core Contributor</div>
+        <p class="profile-bio">Dedicated developer focused on improving user experience and functionality.</p>
+
+        <div class="profile-divider"></div>
+        <div class="social-links">
+          <a href="https://www.linkedin.com/in/suram-sathwik-reddy-383ab42b4" target="_blank" class="social-btn" title="LinkedIn">
+            <i class="fab fa-linkedin-in"></i>
+          </a>
+          <a href="https://github.com/sathwikre" target="_blank" class="social-btn" title="GitHub">
+            <i class="fab fa-github"></i>
+          </a>
+          <a href="mailto:suramsathwikreddy292@gmail.com" class="social-btn" title="Email">
+            <i class="fas fa-envelope"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contributor 3: Mothish -->
+    <!-- <div class="profile-card">
+      <div class="profile-banner"></div>
+      <div class="profile-content">
+        <div class="avatar-wrapper">
+          <img src="{{ url_for('static', filename='images/mothish.jpg') }}"
+               alt="Mothish Raghavendra"
+               class="profile-avatar">
+        </div>
+
+        <h3 class="profile-name">Mothish Raghavendra</h3>
+        <div class="profile-role">Core Contributor</div>
+        <p class="profile-bio">Innovative developer contributing to backend optimization and new features.</p>
+
+        <div class="profile-divider"></div>
+
+        <div class="social-links">
+          <a href="https://www.linkedin.com/in/mothishraghavendra" target="_blank" class="social-btn" title="LinkedIn">
+            <i class="fab fa-linkedin-in"></i>
+          </a>
+          <a href="https://github.com/mothishraghavendra" target="_blank" class="social-btn" title="GitHub">
+            <i class="fab fa-github"></i>
+          </a>
+          <a href="mailto:mothish.k.raghavendra@gmail.com" class="social-btn" title="Email">
+            <i class="fas fa-envelope"></i>
+          </a>
+        </div>
+      </div>
+    </div> -->
+
+  </div>
+
+  <!-- CTA SECTION -->
+  <div class="cta-section">
+    <h2>Want to Contribute?</h2>
+    <p>
+      Help improve the JNTUA Attendance App by fixing bugs, adding features, or improving documentation. 
+      We welcome contributions from developers of all skill levels!
+    </p>
+    <a href="https://github.com/Chanikya-WebDev/JNTUA---Attendance-app" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       class="github-btn">
+      <i class="fab fa-github"></i>
+      View on GitHub
+    </a>
+  </div>
+
+</div>
+
+<footer>
+  <p>&copy; 2026 JNTUA Attendance App. All Rights Reserved.</p>
+</footer>
+
 </body>
 </html>
