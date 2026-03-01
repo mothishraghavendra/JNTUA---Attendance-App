@@ -364,6 +364,7 @@
     }
 
     .span-txt { font-size: 0.62rem; color: var(--muted); font-weight: 500; }
+    .date-chip { display: none; }
 
     /* ── PROGRESS BAR ── */
     .prog-wrap {
@@ -537,7 +538,7 @@
     .empty-state p { font-size: 0.8rem; }
 
     /* ── MOBILE ── */
-    @media (max-width: 540px) {
+    @media (max-width: 768px) {
       .subj-right { display: none; }
       .subj-name  { font-size: 0.82rem; }
       .stat-val   { font-size: 1.15rem; }
@@ -548,6 +549,32 @@
         max-width: 45%;
         text-align: center;
       }
+      
+      /* Move date pill under attendance percentage */
+      .pct-block { position: relative; padding-bottom: 6px; }
+      .pct-block .date-chip {
+        display: block !important;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        font-size: 0.4rem;
+        font-weight: 500;
+        padding: 2px 5px;
+        border-radius: 5px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        color: var(--ink-soft);
+        text-align: center;
+        margin-top: 0;
+      }
+      .date-chip .date-start,
+      .date-chip .date-end {
+        display: block;
+        white-space: nowrap;
+        margin: 1px 0;
+      }
+      .subj-right .chip { display: none; }
     }
   </style>
 </head>
@@ -655,13 +682,25 @@
       <div class="subj-inner">
 
         <!-- PERCENTAGE -->
-        <div class="pct-block">
+       <div class="pct-block">
           {% if row['Attendance %'] != 'N/A' %}
             <div class="pct-num" style="color:{{ num_color }};">{{ pct | round(1) }}%</div>
           {% else %}
             <div class="pct-num" style="color:var(--muted);">—</div>
           {% endif %}
           <div class="pct-label">Attend</div>
+          {% if row['Start Date'] or row['End Date'] %}
+            <div class="date-chip">
+              <span class="date-start">
+                <i class="fas fa-calendar-alt" style="font-size:5px;"></i>
+                {{ row['Start Date'] if row['Start Date'] else 'N/A' }}
+              </span>
+              <span class="date-end">
+                <i class="fas fa-calendar-alt" style="font-size:5px;"></i>
+                {{ row['End Date'] if row['End Date'] else 'N/A' }}
+              </span>
+            </div>
+          {% endif %}
         </div>
 
         <div class="vr"></div>
