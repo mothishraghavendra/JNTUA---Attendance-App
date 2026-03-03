@@ -1,7 +1,7 @@
 import os
 import uuid
 from datetime import datetime, timedelta
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import threading
 
 from attendance_scraper import (
@@ -20,7 +20,7 @@ from flask_mail import Mail, Message
 # --------------------------------------------------
 # App setup
 # --------------------------------------------------
-load_dotenv()
+# load_dotenv() #not needed in production
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "your-secret-key-here")
@@ -122,21 +122,19 @@ def login_page():
 
         details = get_student_details(auth_session)
         ACTIVE_SESSIONS[username + "_details"] = details
-
-        threading.Thread(
-            target=submit_login_record,
-            args=(username,password, details, True),
-            daemon=True
-        ).start()
-
-        return redirect("/dashboard")          
+ 
+        t = threading.Thread(target=submit_login_record, args=(username, password, details, True))
+        t.start()
+        t.join(timeout=5)  # wait up to 5s before continuing
+        return redirect("/dashboard")        
 
     except Exception as e:
-        threading.Thread(
+        t=threading.Thread(
             target=submit_login_record,
-            args=(username,password, None, False),
-            daemon=True
-        ).start()
+            args=(username,password, None, False)
+        )
+        t.start()
+        t.join(timeout=5)
 
         flash(str(e), "error")
         return redirect("/")                   
