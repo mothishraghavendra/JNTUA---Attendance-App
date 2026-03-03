@@ -45,7 +45,12 @@ def init_db():
                     peak_login_hour         TEXT,
                     peak_login_window       TEXT,
                     avg_daily_logins        NUMERIC(8,1),
+                    branch_distribution     TEXT,
+                    daily_breakdown         TEXT,
+                    hourly_distribution     TEXT,
+                    top_10_users            TEXT,
                     generated_at            TIMESTAMP DEFAULT NOW()
+
                 );
             """)
         conn.commit()

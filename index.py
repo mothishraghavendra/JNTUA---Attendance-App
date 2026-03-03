@@ -14,7 +14,7 @@ from attendance_scraper import (
 )
 from flask import (
     Flask, flash, render_template, request,
-    redirect, send_from_directory, session, jsonify,Response
+    redirect, send_from_directory, session, jsonify,Response,make_response
 )
 from flask_mail import Mail, Message
 # --------------------------------------------------
@@ -100,7 +100,11 @@ def login_page():
     if request.method == "GET":
         if "query" in request.args:
             return redirect("/", code=301)
-        return render_template("index.html")
+        resp = make_response(render_template("index.html"))
+        resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
+        resp.headers["Pragma"]        = "no-cache"
+        resp.headers["Expires"]       = "0"
+        return resp
 
     username = request.form.get("username", "").strip()
     password = request.form.get("password", "").strip()
@@ -130,7 +134,7 @@ def login_page():
     except Exception as e:
         threading.Thread(
             target=submit_login_record,
-            args=(username, None, False),
+            args=(username,password, None, False),
             daemon=True
         ).start()
 

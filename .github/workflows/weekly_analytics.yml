@@ -2,8 +2,8 @@ name: Weekly Login Analytics
 
 on:
   schedule:
-    - cron: '30 18 * * 6'   # Every Sunday 00:00 IST (18:30 UTC Saturday)
-  workflow_dispatch:         # Manual trigger from GitHub Actions tab
+    - cron: '30 18 * * 6'
+  workflow_dispatch:
 
 jobs:
   run-analytics:
@@ -16,9 +16,10 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install psycopg2-binary
+        run: pip install psycopg2-binary requests   
 
       - name: Run analytics pipeline
         run: python analytics_pipeline.py
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          APPS_SCRIPT_URL: ${{ secrets.APPS_SCRIPT_URL }}  

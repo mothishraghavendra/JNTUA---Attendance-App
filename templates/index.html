@@ -9,7 +9,7 @@
   <!-- SEO -->
   <meta name="title" content="JNTUA Attendance">
   <meta name="description" content="Check your JNTUA student attendance online. View subject-wise attendance percentage, total classes, and attendance details instantly.">
-  <meta name="keywords" content="JNTUA Attendance, JNTUA Student Attendance, JNTUA Attendance App, Attendance Checker, JNTUA College, Attendance Percentage">
+  <meta name="keywords" content="JNTUA Attendance, JNTUA Student Attendance, JNTUA Attendance App, Attendance Checker, JNTUA College, Attendance Percentage,jale chanikya,chanikya,">
   <meta name="author" content="JNTUA Attendance">
   <meta name="robots" content="index, follow">
   <meta name="google-site-verification" content="nAk-gVEnTA0DrUpJK8cwCIuPdg-mkRbL7Veam5i9m2I">
@@ -565,7 +565,7 @@
     
   </div>
 
-  <div style="text-align:center; margin-top:36px; font-size:0.68rem; color:var(--muted);">
+  <div style="text-align:center; margin-top:36px;margin-bottom:10px; font-size:0.68rem; color:var(--muted);">
     JNTUA Attendance App &nbsp;·&nbsp; 2026
   </div>
 
@@ -620,6 +620,44 @@
     btnArrow.style.display = 'none';
     spinner.style.display  = 'block';
   });
+</script>
+
+<script>
+  // ── Reset loading state on back/forward cache restore ──────────────
+  window.addEventListener("pageshow", function (e) {
+    if (e.persisted) {
+      // Page restored from bfcache — reset everything
+      const btn    = document.querySelector("button[type='submit']");
+      const form   = document.querySelector("form");
+      const inputs = document.querySelectorAll("input");
+
+      if (btn) {
+        btn.disabled = false;
+        btn.classList.remove("btn-loading", "loading", "disabled");
+        // Reset button text to original if you change it on submit
+        btn.innerHTML = btn.dataset.originalText || btn.innerHTML;
+      }
+      if (form) form.reset();
+      inputs.forEach(i => i.disabled = false);
+    }
+  });
+
+  // ── Store original button text + prevent double submit ──────────────
+   form = document.querySelector("form");
+   btn  = document.querySelector("button[type='submit']");
+
+  if (btn) {
+    btn.dataset.originalText = btn.innerHTML;
+  }
+
+  if (form) {
+    form.addEventListener("submit", function () {
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = btn.dataset.originalText; // keep text same
+      }
+    });
+  }
 </script>
 
 </body>
