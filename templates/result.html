@@ -453,6 +453,51 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
+    /* ── FESTIVE POPUP ── */
+    .festive-popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    
+    .festive-popup.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .festive-message {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      animation: scaleIn 0.3s ease forwards;
+    }
+    
+    .festive-emojis {
+      font-size: 2rem;
+      margin-top: 10px;
+    }
+    
+    @keyframes scaleIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    
     /* ── MODAL ── */
     .modal-overlay {
       position: fixed;
@@ -853,7 +898,27 @@
     });
     card.style.cursor = 'pointer';
   });
+
+  // Festive popup for Holi
+  window.addEventListener('load', function() {
+    const popup = document.getElementById('holiPopup');
+    popup.classList.add('show');
+    
+    setTimeout(function() {
+      popup.classList.remove('show');
+    }, 2000);
+  });
 </script>
+
+<!-- Festive Popup -->
+<div id="holiPopup" class="festive-popup">
+  <div class="festive-message">
+    🌈 Happy Holi 🎉
+  </div>
+  <div class="festive-emojis">
+    🎈🎈🎈
+  </div>
+</div>
 
 </body>
 </html>
