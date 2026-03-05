@@ -6,23 +6,19 @@
   <link rel="icon" href="icon.png" type="image/png">
   <title>JNTUA Attendance — Check Your Attendance</title>
 
-  <!-- SEO -->
   <meta name="title" content="JNTUA Attendance">
   <meta name="description" content="Check your JNTUA student attendance online. View subject-wise attendance percentage, total classes, and attendance details instantly.">
   <meta name="keywords" content="JNTUA Attendance, JNTUA Student Attendance, JNTUA Attendance App, Attendance Checker, JNTUA College, Attendance Percentage,jale chanikya,chanikya,">
   <meta name="author" content="JNTUA Attendance">
   <meta name="robots" content="index, follow">
-  <meta name="google-site-verification" content="nAk-gVEnTA0DrUpJK8cwCIuPdg-mkRbL7Veam5i9m2I">
   <link rel="canonical" href="https://jntua-attendance-app.vercel.app/">
 
-  <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://jntua-attendance-app.vercel.app/">
   <meta property="og:title" content="JNTUA Attendance">
   <meta property="og:description" content="Check your JNTUA student attendance online easily.">
   <meta property="og:image" content="https://jntua-attendance-app.vercel.app/assets/og-image.png">
 
-  <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -37,9 +33,6 @@
     "inLanguage": "en-IN"
   }
   </script>
-
-  <!-- Google AdSense — non-blocking -->
-  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9831921446818794" crossorigin="anonymous"></script> -->
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -67,6 +60,154 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    /* ════════════════════════════════════════
+       AD OVERLAY
+    ════════════════════════════════════════ */
+    #adOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(10, 10, 20, 0.82);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      animation: overlayIn 0.4s ease both;
+    }
+
+    @keyframes overlayIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    #adBox {
+      position: relative;
+      background: #fff;
+      border-radius: 18px;
+      overflow: hidden;
+      max-width: 480px;
+      width: calc(100% - 32px);
+      box-shadow: 0 32px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.08);
+      animation: adBoxIn 0.5s cubic-bezier(0.22,1,0.36,1) 0.1s both;
+    }
+
+    @keyframes adBoxIn {
+      from { opacity: 0; transform: scale(0.88) translateY(20px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* ── AD IMAGE ── */
+    #adImage {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 70vh;
+      object-fit: cover;
+    }
+
+    /* ── PROGRESS BAR at top of ad ── */
+    #adProgressTrack {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: rgba(255,255,255,0.25);
+    }
+
+    #adProgressBar {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #7C3AED, #2563EB);
+      transform-origin: left;
+      animation: progressDrain 5s linear forwards;
+    }
+
+    @keyframes progressDrain {
+      from { transform: scaleX(1); }
+      to   { transform: scaleX(0); }
+    }
+
+    /* ── CLOSE BUTTON (hidden for 5 s) ── */
+    #adClose {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 12px;
+      background: rgba(20, 20, 30, 0.75);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 30px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      cursor: default;
+      pointer-events: none;
+      opacity: 0.55;
+      user-select: none;
+      backdrop-filter: blur(4px);
+      transition: background 0.2s, opacity 0.3s, transform 0.15s;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    }
+
+    #adClose.ready {
+      cursor: pointer;
+      pointer-events: auto;
+      opacity: 1;
+    }
+
+    #adClose.ready:hover {
+      background: rgba(20, 20, 30, 0.92);
+      transform: scale(1.04);
+    }
+
+    #adClose svg {
+      width: 11px; height: 11px;
+      flex-shrink: 0;
+    }
+
+    /* countdown number inside button */
+    #adCountdown {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ── AD FOOTER LABEL ── */
+    #adLabel {
+      padding: 10px 16px;
+      background: #F8F9FF;
+      border-top: 1px solid #E5E9F0;
+      font-size: 0.65rem;
+      color: #8892A0;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    /* Overlay exit animation */
+    #adOverlay.closing {
+      animation: overlayOut 0.35s ease forwards;
+    }
+
+    @keyframes overlayOut {
+      from { opacity: 1; }
+      to   { opacity: 0; pointer-events: none; }
+    }
+
+    #adBox.closing {
+      animation: adBoxOut 0.35s cubic-bezier(0.4,0,1,1) forwards;
+    }
+
+    @keyframes adBoxOut {
+      from { opacity: 1; transform: scale(1); }
+      to   { opacity: 0; transform: scale(0.92); }
+    }
+
+    /* ════════════════════════════════════════
+       REST OF PAGE (unchanged)
+    ════════════════════════════════════════ */
     .page {
       max-width: 760px;
       margin: 0 auto;
@@ -76,7 +217,6 @@
       flex-direction: column;
     }
 
-    /* ── EYEBROW ── */
     .eyebrow {
       display: inline-flex;
       align-items: center;
@@ -101,7 +241,6 @@
       50%       { opacity: 0.25; }
     }
 
-    /* ── HEADER ── */
     .site-header {
       margin-bottom: 32px;
       animation: fadeUp 0.45s ease both;
@@ -122,7 +261,6 @@
       line-height: 1.6;
     }
 
-    /* ── SECTION HEAD ── */
     .section-head {
       display: flex;
       align-items: center;
@@ -153,7 +291,6 @@
       border: 1px solid #BFDBFE;
     }
 
-    /* ── LOGIN CARD ── */
     .login-card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -181,7 +318,6 @@
       padding: 28px 28px 24px;
     }
 
-    /* ── ALERT ── */
     .alert {
       display: flex;
       align-items: flex-start;
@@ -197,16 +333,8 @@
 
     .alert-error   { background: #FFF1F2; border-color: #FECDD3; color: #9F1239; }
     .alert-success { background: #F0FDF4; border-color: #BBF7D0; color: #14532D; }
+    .alert > svg { flex-shrink: 0; width: 15px; height: 15px; margin-top: 1px; }
 
-    /* Shared size for all alert SVG icons */
-    .alert > svg {
-      flex-shrink: 0;
-      width: 15px;
-      height: 15px;
-      margin-top: 1px;
-    }
-
-    /* ── FORM ── */
     .form-group { margin-bottom: 16px; }
 
     .form-label {
@@ -219,12 +347,8 @@
       margin-bottom: 6px;
     }
 
-    /* The wrapper positions the leading icon and optional trailing button */
-    .input-wrap {
-      position: relative;
-    }
+    .input-wrap { position: relative; }
 
-    /* Leading icon — absolutely centred on the left */
     .input-wrap .ico {
       position: absolute;
       left: 11px;
@@ -235,16 +359,13 @@
       color: var(--muted);
       pointer-events: none;
       transition: color 0.15s;
-      /* prevent SVG from stretching */
       flex-shrink: 0;
     }
 
-    /* Tint leading icon when the sibling input is focused */
     .input-wrap:focus-within .ico { color: var(--purple); }
 
     .form-input {
       width: 100%;
-      /* left: room for leading icon | right: small buffer */
       padding: 10px 12px 10px 34px;
       border: 1px solid var(--border);
       border-radius: 9px;
@@ -256,9 +377,7 @@
       font-family: inherit;
     }
 
-    /* Extra right padding when the eye-toggle button is present */
     .form-input.has-toggle { padding-right: 38px; }
-
     .form-input::placeholder { color: var(--muted); }
 
     .form-input:focus {
@@ -267,7 +386,6 @@
       background: var(--card);
     }
 
-    /* ── EYE TOGGLE ── */
     .pw-toggle {
       position: absolute;
       right: 8px;
@@ -287,15 +405,8 @@
     }
 
     .pw-toggle:hover { color: var(--purple); }
+    .pw-toggle svg { width: 15px; height: 15px; pointer-events: none; }
 
-    /* Both SVGs live inside the button; JS toggles display */
-    .pw-toggle svg {
-      width: 15px;
-      height: 15px;
-      pointer-events: none;
-    }
-
-    /* ── SUBMIT BUTTON ── */
     .btn-submit {
       display: flex;
       align-items: center;
@@ -326,16 +437,9 @@
     .btn-submit:active:not(:disabled) { transform: translateY(0); }
     .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
-    /* Arrow SVG inside button */
-    .btn-submit > svg {
-      width: 14px; height: 14px;
-      flex-shrink: 0;
-      transition: transform 0.15s;
-    }
-
+    .btn-submit > svg { width: 14px; height: 14px; flex-shrink: 0; transition: transform 0.15s; }
     .btn-submit:hover:not(:disabled) > svg { transform: translateX(3px); }
 
-    /* ── SPINNER ── */
     .spinner {
       display: none;
       width: 14px; height: 14px;
@@ -348,34 +452,6 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── TIP ── */
-    .tip-box {
-      margin-top: 4px;
-      padding: 13px 16px;
-      background: #F5F3FF;
-      border: 1px solid #DDD6FE;
-      border-radius: 12px;
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      animation: fadeUp 0.45s 0.22s both;
-    }
-
-    .tip-icon {
-      flex-shrink: 0;
-      width: 28px; height: 28px;
-      border-radius: 8px;
-      background: var(--purple);
-      display: flex; align-items: center; justify-content: center;
-      color: #fff;
-    }
-
-    .tip-icon svg { width: 13px; height: 13px; }
-
-    .tip-title { font-size: 0.75rem; font-weight: 700; color: #3B0764; margin-bottom: 2px; }
-    .tip-text  { font-size: 0.71rem; color: #5B21B6; line-height: 1.55; }
-
-    /* ── FOOTER ── */
     footer {
       background: var(--ink);
       color: #D1D5DB;
@@ -389,7 +465,7 @@
       text-align: center;
     }
 
-    .footer-inner h3 {
+    .footer-inner h2 {
       font-size: 1rem;
       font-weight: 700;
       color: #fff;
@@ -429,24 +505,55 @@
       color: #6B7280;
     }
 
-    /* ── ANIMATION ── */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(12px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── MOBILE ── */
     @media (max-width: 480px) {
       .card-inner { padding: 20px 18px 18px; }
       .site-header h1 { font-size: 1.4rem; }
+      #adBox { border-radius: 14px; }
     }
   </style>
 </head>
 <body>
 
+<!-- ════════════════════════════════════════
+     AD OVERLAY
+     ➜ Replace "YOUR_POSTER_IMAGE.jpg" with your actual image path/URL
+════════════════════════════════════════ -->
+<div id="adOverlay" role="dialog" aria-modal="true" aria-label="Advertisement">
+  <div id="adBox">
+
+    <!-- Shrinking progress bar at top -->
+    <div id="adProgressTrack">
+      <div id="adProgressBar"></div>
+    </div>
+
+    <!-- Close button (locked for 5 s) -->
+    <button id="adClose" type="button" aria-label="Close advertisement">
+      <svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+        <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+      </svg>
+      <span>Close in <span id="adCountdown">5</span>s</span>
+    </button>
+
+    <!-- ⬇⬇ REPLACE src WITH YOUR POSTER IMAGE PATH ⬇⬇ -->
+    <img id="adImage"
+         src="static/src/adv.jpeg"
+         alt="Advertisement"
+         draggable="false"
+         onError="this.src='https://placehold.co/480x320/1A1F2E/FFFFFF?text=Your+Poster+Here'"/>
+    <!-- ⬆⬆ REPLACE src WITH YOUR POSTER IMAGE PATH ⬆⬆ -->
+
+    <div id="adLabel">Advertisement <br><br><b>POWERED BY K Sree Sai</b></div>
+  </div>
+</div>
+
+
 <div class="page">
 
-  <!-- HEADER -->
   <header class="site-header">
     <div class="eyebrow">
       <span class="eyebrow-dot"></span>
@@ -456,122 +563,104 @@
     <p class="sub">Secure access to your JNTUA attendance records — subject-wise, updated in real time.</p>
   </header>
 
-  <!-- SECTION HEAD -->
   <div class="section-head">
     <span class="sh-label">Student Login</span>
     <div class="sh-line"></div>
     <span class="sh-badge">JNTUA Portal</span>
   </div>
-<main>
-  <!-- LOGIN CARD -->
-  <div class="login-card">
-    <div class="card-bar"></div>
-    <div class="card-inner">
 
-      <!-- Flash messages -->
-      {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-        <div class="alert alert-{{ 'error' if category == 'error' else 'success' }}" role="alert">
-          {% if category == 'error' %}
-          <!-- Circle exclamation -->
-          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-            <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zM7.5 4h1v5h-1V4zm.5 7.5a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5z"/>
-          </svg>
-          {% else %}
-          <!-- Circle check -->
-          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-            <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm3.03 5.47-3.5 4.5a.75.75 0 0 1-1.13.07l-1.5-1.5a.75.75 0 1 1 1.06-1.06l.92.92 2.98-3.83a.75.75 0 1 1 1.17.94z"/>
-          </svg>
-          {% endif %}
-          <span>{{ message }}</span>
-        </div>
-        {% endfor %}
-      {% endif %}
-      {% endwith %}
+  <main>
+    <div class="login-card">
+      <div class="card-bar"></div>
+      <div class="card-inner">
 
-      <form id="loginForm" action="/" method="POST" novalidate>
-
-        <!-- USERNAME -->
-        <div class="form-group">
-          <label class="form-label" for="username">Username</label>
-          <div class="input-wrap">
-            <!-- Leading icon: person/user -->
-            <svg class="ico" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-              <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-5 6a5 5 0 0 1 10 0H3z"/>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+          <div class="alert alert-{{ 'error' if category == 'error' else 'success' }}" role="alert">
+            {% if category == 'error' %}
+            <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zM7.5 4h1v5h-1V4zm.5 7.5a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5z"/>
             </svg>
-            <input type="text"
-                   id="username"
-                   name="username"
-                   class="form-input"
-                   placeholder="Enter your username"
-                   autocomplete="username"
-                   required
-                   aria-required="true">
-          </div>
-        </div>
-
-        <!-- PASSWORD -->
-        <div class="form-group">
-          <label class="form-label" for="passwordInput">Password</label>
-          <div class="input-wrap">
-            <!-- Leading icon: lock -->
-            <svg class="ico" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-              <path d="M8 1a3.5 3.5 0 0 0-3.5 3.5V6H3a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-1.5V4.5A3.5 3.5 0 0 0 8 1zm-2 3.5a2 2 0 0 1 4 0V6H6V4.5z"/>
+            {% else %}
+            <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm3.03 5.47-3.5 4.5a.75.75 0 0 1-1.13.07l-1.5-1.5a.75.75 0 1 1 1.06-1.06l.92.92 2.98-3.83a.75.75 0 1 1 1.17.94z"/>
             </svg>
-            <input type="password"
-                   id="passwordInput"
-                   name="password"
-                   class="form-input has-toggle"
-                   placeholder="Enter your password"
-                   autocomplete="current-password"
-                   required
-                   aria-required="true">
-            <!-- Eye toggle: two SVGs, JS swaps them -->
-            <button type="button" id="togglePassword" class="pw-toggle" aria-label="Show password">
-              <!-- Eye open — visible when type=password -->
-              <svg id="iconEyeOpen" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.1 13.1 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13.1 13.1 0 0 1 14.828 8a13.1 13.1 0 0 1-1.66 2.043C11.879 11.332 10.12 12.5 8 12.5s-3.879-1.168-5.168-2.457A13.1 13.1 0 0 1 1.172 8z"/>
-                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
-              </svg>
-              <!-- Eye with slash — visible when type=text -->
-              <svg id="iconEyeSlash" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" style="display:none;">
-                <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.03 7.03 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486l.708.709z"/>
-                <path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829l.822.822zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829z"/>
-                <path d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12-.708.708z"/>
-              </svg>
-            </button>
+            {% endif %}
+            <span>{{ message }}</span>
           </div>
-        </div>
+          {% endfor %}
+        {% endif %}
+        {% endwith %}
 
-        <!-- SUBMIT -->
-        <button type="submit" id="loginBtn" class="btn-submit">
-          <span id="btnText">Check Attendance</span>
-          <!-- Arrow right -->
-          <svg id="btnArrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
-               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <line x1="2" y1="8" x2="14" y2="8"/>
-            <polyline points="9 3 14 8 9 13"/>
-          </svg>
-          <div class="spinner" id="spinner" aria-hidden="true"></div>
-        </button>
+        <form id="loginForm" action="/" method="POST" novalidate>
 
-      </form>
+          <div class="form-group">
+            <label class="form-label" for="username">Username</label>
+            <div class="input-wrap">
+              <svg class="ico" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-5 6a5 5 0 0 1 10 0H3z"/>
+              </svg>
+              <input type="text"
+                     id="username"
+                     name="username"
+                     class="form-input"
+                     placeholder="Enter your username"
+                     autocomplete="username"
+                     required
+                     aria-required="true">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="passwordInput">Password</label>
+            <div class="input-wrap">
+              <svg class="ico" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <path d="M8 1a3.5 3.5 0 0 0-3.5 3.5V6H3a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-1.5V4.5A3.5 3.5 0 0 0 8 1zm-2 3.5a2 2 0 0 1 4 0V6H6V4.5z"/>
+              </svg>
+              <input type="password"
+                     id="passwordInput"
+                     name="password"
+                     class="form-input has-toggle"
+                     placeholder="Enter your password"
+                     autocomplete="current-password"
+                     required
+                     aria-required="true">
+              <button type="button" id="togglePassword" class="pw-toggle" aria-label="Show password">
+                <svg id="iconEyeOpen" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.1 13.1 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13.1 13.1 0 0 1 14.828 8a13.1 13.1 0 0 1-1.66 2.043C11.879 11.332 10.12 12.5 8 12.5s-3.879-1.168-5.168-2.457A13.1 13.1 0 0 1 1.172 8z"/>
+                  <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                </svg>
+                <svg id="iconEyeSlash" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" style="display:none;">
+                  <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.03 7.03 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486l.708.709z"/>
+                  <path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829l.822.822zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829z"/>
+                  <path d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12-.708.708z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" id="loginBtn" class="btn-submit">
+            <span id="btnText">Check Attendance</span>
+            <svg id="btnArrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="2" y1="8" x2="14" y2="8"/>
+              <polyline points="9 3 14 8 9 13"/>
+            </svg>
+            <div class="spinner" id="spinner" aria-hidden="true"></div>
+          </button>
+
+        </form>
+      </div>
     </div>
-  </div>
 
-  <!-- TIP -->
-  
-    
-  </div>
+    <div style="text-align:center; margin-top:36px; margin-bottom:10px; font-size:0.68rem; color:var(--muted);">
+      JNTUA Attendance App &nbsp;·&nbsp; 2026
+    </div>
+  </main>
 
-  <div style="text-align:center; margin-top:36px;margin-bottom:10px; font-size:0.68rem; color:var(--muted);">
-    JNTUA Attendance App &nbsp;·&nbsp; 2026
-  </div>
+</div>
 
-</div><!-- end .page -->
-</main>
-<!-- FOOTER -->
 <footer>
   <div class="footer-inner">
     <h2>Open Source Project</h2>
@@ -580,7 +669,6 @@
        target="_blank"
        rel="noopener noreferrer"
        class="github-btn">
-      <!-- GitHub mark -->
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.839 9.492.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.378.203 2.398.1 2.65.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0 0 22 12c0-5.523-4.477-10-10-10z" clip-rule="evenodd"/>
       </svg>
@@ -593,26 +681,77 @@
 </footer>
 
 <script>
+  // ── AD OVERLAY: 5-second countdown then unlock close button ──
+  (function () {
+    const overlay    = document.getElementById('adOverlay');
+    const adBox      = document.getElementById('adBox');
+    const closeBtn   = document.getElementById('adClose');
+    const countdown  = document.getElementById('adCountdown');
+    const DURATION   = 5; // seconds
+
+    let remaining = DURATION;
+
+    // Tick every second
+    const timer = setInterval(() => {
+      remaining--;
+      if (remaining > 0) {
+        countdown.textContent = remaining;
+      } else {
+        clearInterval(timer);
+        // Unlock the close button
+        closeBtn.classList.add('ready');
+        closeBtn.setAttribute('aria-label', 'Close advertisement');
+        closeBtn.querySelector('span').textContent = 'Close Ad';
+      }
+    }, 1000);
+
+    // Close handler
+    function closeAd() {
+      overlay.classList.add('closing');
+      adBox.classList.add('closing');
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        // Re-enable scrolling (body scroll lock could be added here)
+      }, 340);
+    }
+
+    closeBtn.addEventListener('click', () => {
+      if (closeBtn.classList.contains('ready')) closeAd();
+    });
+
+    // Optional: close on backdrop click (AFTER timer)
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay && closeBtn.classList.contains('ready')) closeAd();
+    });
+
+    // Optional: ESC key to close (AFTER timer)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && closeBtn.classList.contains('ready')) closeAd();
+    });
+  })();
+</script>
+
+<script>
   // ── Password visibility toggle ──
-  const pwInput   = document.getElementById('passwordInput');
-  const pwToggle  = document.getElementById('togglePassword');
-  const eyeOpen   = document.getElementById('iconEyeOpen');
-  const eyeSlash  = document.getElementById('iconEyeSlash');
+  const pwInput  = document.getElementById('passwordInput');
+  const pwToggle = document.getElementById('togglePassword');
+  const eyeOpen  = document.getElementById('iconEyeOpen');
+  const eyeSlash = document.getElementById('iconEyeSlash');
 
   pwToggle.addEventListener('click', () => {
     const hidden = pwInput.type === 'password';
-    pwInput.type          = hidden ? 'text' : 'password';
-    eyeOpen.style.display  = hidden ? 'none'  : '';
-    eyeSlash.style.display = hidden ? ''      : 'none';
+    pwInput.type           = hidden ? 'text'     : 'password';
+    eyeOpen.style.display  = hidden ? 'none'     : '';
+    eyeSlash.style.display = hidden ? ''         : 'none';
     pwToggle.setAttribute('aria-label', hidden ? 'Hide password' : 'Show password');
   });
 
   // ── Form submit loading state ──
-  const form    = document.getElementById('loginForm');
-  const btn     = document.getElementById('loginBtn');
-  const btnText = document.getElementById('btnText');
-  const btnArrow= document.getElementById('btnArrow');
-  const spinner = document.getElementById('spinner');
+  const form     = document.getElementById('loginForm');
+  const btn      = document.getElementById('loginBtn');
+  const btnText  = document.getElementById('btnText');
+  const btnArrow = document.getElementById('btnArrow');
+  const spinner  = document.getElementById('spinner');
 
   form.addEventListener('submit', () => {
     btn.disabled           = true;
@@ -620,44 +759,17 @@
     btnArrow.style.display = 'none';
     spinner.style.display  = 'block';
   });
-</script>
 
-<script>
-  // ── Reset loading state on back/forward cache restore ──────────────
-  window.addEventListener("pageshow", function (e) {
+  // ── Reset on bfcache restore ──
+  window.addEventListener('pageshow', function (e) {
     if (e.persisted) {
-      // Page restored from bfcache — reset everything
-      const btn    = document.querySelector("button[type='submit']");
-      const form   = document.querySelector("form");
-      const inputs = document.querySelectorAll("input");
-
-      if (btn) {
-        btn.disabled = false;
-        btn.classList.remove("btn-loading", "loading", "disabled");
-        // Reset button text to original if you change it on submit
-        btn.innerHTML = btn.dataset.originalText || btn.innerHTML;
-      }
-      if (form) form.reset();
-      inputs.forEach(i => i.disabled = false);
+      btn.disabled = false;
+      btnText.textContent    = 'Check Attendance';
+      btnArrow.style.display = '';
+      spinner.style.display  = 'none';
+      form.reset();
     }
   });
-
-  // ── Store original button text + prevent double submit ──────────────
-   form = document.querySelector("form");
-   btn  = document.querySelector("button[type='submit']");
-
-  if (btn) {
-    btn.dataset.originalText = btn.innerHTML;
-  }
-
-  if (form) {
-    form.addEventListener("submit", function () {
-      if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = btn.dataset.originalText; // keep text same
-      }
-    });
-  }
 </script>
 
 </body>
