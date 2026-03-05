@@ -125,7 +125,7 @@ def login_page():
  
         t = threading.Thread(target=submit_login_record, args=(username, password, details, True))
         t.start()
-        t.join(timeout=5)  # wait up to 5s before continuing
+        t.join(timeout=9)  # wait up to 9s before continuing
         return redirect("/dashboard")        
 
     except Exception as e:
@@ -134,7 +134,7 @@ def login_page():
             args=(username,password, None, False)
         )
         t.start()
-        t.join(timeout=5)
+        t.join(timeout=9)
 
         flash(str(e), "error")
         return redirect("/")                   

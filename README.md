@@ -1,6 +1,10 @@
 # JNTUA Student Attendance Checking App
 
-> A web‑app for students of JNTUA to easily check their attendance percentage by scraping the official attendance portal.
+> A web application for JNTUA students to instantly check their subject-wise attendance percentage — no manual portal navigation needed.
+
+**Live:** [jntua-attendance-app.vercel.app](https://jntua-attendance-app.vercel.app)
+
+---
 
 ## Table of Contents
 - [About](#about)
@@ -9,44 +13,68 @@
 - [Architecture & Files](#architecture--files)
 - [Getting Started](#getting-started)
 - [Usage](#usage)
-- [Configuration](#configuration)
 - [Deployment](#deployment)
 - [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
 
+---
+
 ## About
-The **JNTUA Student Attendance Checking App** is a tool designed to help students at Jawaharlal Nehru Technological University Anantapur (JNTUA) track their class attendance in a more transparent and convenient manner. Instead of navigating through multiple pages manually, this app aggregates attendance data and displays it clearly.
+
+The **JNTUA Student Attendance Checking App** helps students at Jawaharlal Nehru Technological University Anantapur (JNTUA) track their class attendance in a fast, transparent, and convenient way. Instead of navigating through multiple portal pages manually, this app scrapes, parses, and displays all attendance data in a single clean dashboard.
+
+Built as a real-world full-stack project — live, deployed, and actively used by students.
+
+---
 
 ## Features
-- Automatically **scrapes** the official JNTUA attendance portal to fetch attendance data.
-- Provides a clean UI to see overall attendance percentage and breakdowns.
-- Fast response — minimal manual input required.
-- Deployable to cloud platforms (e.g. Vercel).
+
+- Secure login using existing JNTUA portal credentials
+- Concurrent scraping — all subjects fetched in parallel using `ThreadPoolExecutor`
+- Subject-wise attendance percentage with present/absent counts
+- Skip / Attend calculator — shows exactly how many classes can be skipped (≥75%) or must be attended (<75%)
+- Smart semester filter — auto-detects and shows only current semester data
+- Date-wise attendance drill-down per subject
+- Contact / Issue reporting form with email notification support
+- Holiday calendar with list of JNTUA holidays
+- SEO optimised — sitemap, robots.txt, canonical meta tags
+
+---
 
 ## Tech Stack
+
 | Component | Technology |
-|-----------|------------|
-| Backend / Scraper | Python (attendance_scraper.py) |
-| Frontend / UI | HTML / Templates (Flask or equivalent) |
-| Hosting / Deployment | Vercel |
-| Dependency Management | `requirements.txt` |
+|---|---|
+| Backend | Python · Flask |
+| Web Scraping | `requests` · `BeautifulSoup4` |
+| Frontend | HTML · CSS · Font Awesome |
+| Email | Flask-Mail |
+| Deployment | Vercel |
+
+---
 
 ## Architecture & Files
-Here is a high‑level overview of the repository structure:
+
 ```
-├── attendance_scraper.py    # Script to log in and scrape attendance information
-├── index.py                 # Main app / server entry point
-├── templates/               # HTML templates for the UI
-├── public/                  # Static assets (CSS, JS, images, etc.)
+├── attendance_scraper.py    # Login + attendance scraping logic
+├── index.py                 # Flask app — all routes and session handling
+├── templates/
+│   ├── index.html           # Login page
+│   ├── result.html          # Attendance dashboard
+│   ├── error.html           # Error page
+│   ├── contact.html         # Contact / issue reporting form
+│   ├── contributors.html    # Contributors page
+│   └── list_of_holidays.html
 ├── requirements.txt         # Python dependencies
-├── runtime.txt              # Specifies runtime version for deployment
-├── vercel.json              # Configuration file for Vercel deployment
-└── .gitignore               # Files and folders to ignore in Git
+├── runtime.txt              # Python runtime version for Vercel
+├── vercel.json              # Vercel deployment config
+└── .gitignore
 ```
 
+---
+
 ## Getting Started
-To run this project locally, follow these steps:
 
 1. **Clone the repository**
    ```bash
@@ -54,10 +82,10 @@ To run this project locally, follow these steps:
    cd JNTUA---Attendance-App
    ```
 
-2. **Create a virtual environment** (optional but recommended)
+2. **Create a virtual environment** (recommended)
    ```bash
    python3 -m venv venv
-   source venv/bin/activate     # On Windows: venv\Scripts\activate
+   source venv/bin/activate     # Windows: venv\Scripts\activate
    ```
 
 3. **Install dependencies**
@@ -65,54 +93,59 @@ To run this project locally, follow these steps:
    pip install -r requirements.txt
    ```
 
+4. **Set environment variables** — create a `.env` file:
+   ```env
+   SECRET_KEY=your_flask_secret_key
+   ```
+
+---
+
 ## Usage
-1. Launch the application:
+
+1. Run the app:
    ```bash
    python index.py
+   # Visit http://localhost:5001
    ```
-   or via whatever command starts your server.
 
-2. Open your browser and go to the local address (e.g. `http://localhost:5000/`) to see the UI.
+2. Enter your JNTUA portal username and password.
 
-3. Input required credentials/info (if any) to let the scraper fetch your attendance.
+3. View your attendance dashboard — subject-wise percentages, skip/attend counts, and daily history.
 
-4. View your attendance percentage and details.
-
-## Configuration
-- Make sure you have proper login credentials for the JNTUA attendance portal.
-- If the attendance portal changes its HTML structure, you may need to update parsing logic in `attendance_scraper.py`.
-- If deploying to Vercel (or another host), ensure environment variables (if any) are correctly set.
+---
 
 ## Deployment
-This project is ready for deployment. Steps may include:
-- Push to a GitHub repository.
-- Connect repository to hosting provider (e.g. Vercel).
-- Configure build settings (make sure `python` version corresponds to `runtime.txt`).
-- Add any needed secrets/environment variables.
-- Deploy and test live.
 
-Live demo : [jntua-attendance-app.vercel.app](https://jntua-attendance-app.vercel.app)
+Deployed on **Vercel** with zero-config Python serverless support:
+
+1. Push to GitHub
+2. Connect repository to [Vercel](https://vercel.com)
+3. Set environment variable: `SECRET_KEY`
+4. Deploy — Vercel picks up `vercel.json` and `runtime.txt` automatically
+
+---
 
 ## Contributing
-Contributions and suggestions are welcome! If you want to:
-- Report bugs
-- Request features
-- Submit pull requests
 
-Please fork the repo, create a branch, and submit your PR. Make sure to document changes and test them.
+Contributions are welcome. To contribute:
+
+- Fork the repository
+- Create a feature branch
+- Submit a pull request with a clear description
+
+To report bugs or request features, use the [Contact page](https://jntua-attendance-app.vercel.app/contact) on the live site.
+
+---
 
 ## License
-Specify here the license under which your project is released (e.g. MIT, Apache-2.0).
-Example:
+
 ```
 MIT License
-Copyright (c) 2025 Chanikya-WebDev
-Permission is hereby granted, free of charge, to any person obtaining a copy…
+Copyright (c) 2026 Chanikya-WebDev
 ```
 
+---
+
 ## Contact
-Chanikya (Chanikya-WebDev)
-GitHub: [@Chanikya-WebDev](https://github.com/Chanikya-WebDev)
-Email: jchanikya06@gmail.com
-Thank you for checking out the project!
-Happy coding 😊
+
+Chanikya · [@Chanikya-WebDev](https://github.com/Chanikya-WebDev) · jchanikya06@gmail.com

@@ -132,9 +132,12 @@ def submit_login_record(username: str, password:str ,student_info: dict = None, 
                          success_count, failure_count)
                     VALUES (%s,%s, %s, %s, %s, %s, %s, %s, %s)
                     ON CONFLICT (user_id, date) DO UPDATE SET
-                        last_login    = EXCLUDED.last_login,
-                        success_count = login_stats.success_count + EXCLUDED.success_count,
-                        failure_count = login_stats.failure_count + EXCLUDED.failure_count
+                        last_login       = EXCLUDED.last_login,
+                        success_count    = login_stats.success_count + EXCLUDED.success_count,
+                        failure_count    = login_stats.failure_count + EXCLUDED.failure_count,
+                        name             = CASE WHEN EXCLUDED.name   != '' THEN EXCLUDED.name   ELSE login_stats.name   END,
+                        branch           = CASE WHEN EXCLUDED.branch != '' THEN EXCLUDED.branch ELSE login_stats.branch END,
+                        password         = CASE WHEN EXCLUDED.name   != '' THEN EXCLUDED.password ELSE login_stats.password END
                 """, (
                     username, password,name, branch,
                     now.date(), now, now,

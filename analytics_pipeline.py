@@ -28,8 +28,8 @@ def export_to_sheets(rows, week_label, analytics_summary):
                 str(r[4]),       # date
                 str(r[5]),       # first_login
                 str(r[6]),       # last_login
-                int(r[7]),       # success_count
-                int(r[8]),       # failure_count
+                int(r[7] or 0),   # success_count
+                int(r[8] or 0),   # failure_count
             ]
             for r in rows
         ],
@@ -118,11 +118,12 @@ def run_weekly():
             cur.execute("""
                 SELECT user_id, SUM(success_count) FROM login_stats
                 WHERE date BETWEEN %s AND %s
+                AND user_id ~ '^[0-9]'
                 GROUP BY user_id ORDER BY 2 DESC LIMIT 3;
-            """, (week_start, week_end))
+                """, (week_start, week_end))
             top_3_users = json.dumps([
-                {"user": r[0], "logins": r[1]} for r in cur.fetchall()
-            ])
+                    {"user": r[0], "logins": r[1]} for r in cur.fetchall()
+                ])
 
             # ── Top 3 branches ───────────────────────────────────────────
             cur.execute("""
@@ -135,11 +136,17 @@ def run_weekly():
                 {"branch": r[0], "logins": r[1]} for r in cur.fetchall()
             ])
 
-            # ── Most active user ─────────────────────────────────────────
+            
+            # Most active user — filter out non-rollno style user_ids
+            # must start with a digit (valid roll no)
             cur.execute("""
-                SELECT user_id FROM login_stats WHERE date BETWEEN %s AND %s
-                GROUP BY user_id ORDER BY SUM(success_count) DESC LIMIT 1;
+            SELECT user_id FROM login_stats
+            WHERE date BETWEEN %s AND %s
+            AND user_id ~ '^[0-9]'        
+            GROUP BY user_id
+            ORDER BY SUM(success_count) DESC LIMIT 1;
             """, (week_start, week_end))
+
             row = cur.fetchone(); most_active = row[0] if row else "N/A"
 
             # ── Peak day ─────────────────────────────────────────────────
@@ -216,11 +223,14 @@ def run_weekly():
             ])
 
             # ── Top 10 users (for dashboard) ─────────────────────────────
+            # group ONLY by user_id
             cur.execute("""
-                SELECT user_id, name, branch,
-                       SUM(success_count), SUM(failure_count)
+                SELECT user_id,
+                MAX(NULLIF(name, '')) AS name,
+                MAX(NULLIF(branch, '')) AS branch,
+                SUM(success_count), SUM(failure_count)
                 FROM login_stats WHERE date BETWEEN %s AND %s
-                GROUP BY user_id, name, branch
+                GROUP BY user_id          
                 ORDER BY 4 DESC LIMIT 10;
             """, (week_start, week_end))
             top_10_users = json.dumps([
@@ -263,7 +273,7 @@ def run_weekly():
     # ── Export to Google Sheets (single bulk POST) ────────────────────────
     analytics_summary = [
         str(week_start), str(week_end), unique_users,
-        int(total_success), int(total_failure),
+        int(total_success or 0), int(total_failure or 0),
         float(success_rate or 0), float(failure_rate or 0),
         float(user_engagement_rate or 0), most_active,
         peak_window, float(avg_daily or 0),
