@@ -366,6 +366,7 @@
 
     .mobile-date { display: none; }
     .span-txt { font-size: 0.62rem; color: var(--muted); font-weight: 500; }
+    .date-chip { display: none; }
 
     /* ── NOTE BOX ── */
     .note-box {
@@ -438,7 +439,7 @@
       from { opacity: 0; transform: translateY(12px); }
       to   { opacity: 1; transform: translateY(0); }
     }
-
+    
     /* ── MODAL ── */
     .modal-overlay {
       position: fixed;
@@ -662,13 +663,25 @@
       <div class="subj-inner">
 
         <!-- PERCENTAGE -->
-        <div class="pct-block">
+       <div class="pct-block">
           {% if row['Attendance %'] != 'N/A' %}
             <div class="pct-num" style="color:{{ num_color }};">{{ pct | round(1) }}%</div>
           {% else %}
             <div class="pct-num" style="color:var(--muted);">—</div>
           {% endif %}
           <div class="pct-label">Attend</div>
+          {% if row['Start Date'] or row['End Date'] %}
+            <div class="date-chip">
+              <span class="date-start">
+                <i class="fas fa-calendar-alt" style="font-size:5px;"></i>
+                {{ row['Start Date'] if row['Start Date'] else 'N/A' }}
+              </span>
+              <span class="date-end">
+                <i class="fas fa-calendar-alt" style="font-size:5px;"></i>
+                {{ row['End Date'] if row['End Date'] else 'N/A' }}
+              </span>
+            </div>
+          {% endif %}
         </div>
 
         <div class="vr"></div>
@@ -810,6 +823,15 @@
   overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
+  cards.forEach(card => {
+    card.addEventListener('click', () => {
+      const subject = card.dataset.subject;
+      if (subject) openModal(subject);
+    });
+    card.style.cursor = 'pointer';
+  });
+
+  // Click on card to open modal
   cards.forEach(card => {
     card.addEventListener('click', () => {
       const subject = card.dataset.subject;
