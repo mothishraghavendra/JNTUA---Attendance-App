@@ -1,5 +1,6 @@
 import os
 import uuid
+from flask_hot_reload import HotReload
 from datetime import datetime, timedelta
 # from dotenv import load_dotenv
 import threading
@@ -23,6 +24,7 @@ from flask_mail import Mail, Message
 # load_dotenv() #not needed in production
 
 app = Flask(__name__)
+hot_reload = HotReload(app)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "your-secret-key-here")
 
 app.config["SESSION_COOKIE_SECURE"] = False
@@ -372,4 +374,7 @@ def server_error(_):
 
 
 if __name__ == "__main__":
-    app.run(port=5001, debug=False)
+    app.run(port=5001, debug=True)
+
+
+## Turn it for hot_loading 
