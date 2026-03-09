@@ -4,14 +4,13 @@ import psycopg2
 import requests
 from datetime import datetime, timedelta
 
-
 def get_conn():
     return psycopg2.connect(os.environ["DATABASE_URL"], sslmode="require")
 
 
 # ── Single bulk POST to Apps Script Web App ──────────────────────────────────
 
-def export_to_sheets(rows, week_label, analytics_summary):
+def export_to_sheets(rows, week_label, analytics_summary,weekly_report):
     apps_script_url = os.environ.get("APPS_SCRIPT_URL")
     if not apps_script_url:
         print("APPS_SCRIPT_URL not set. Skipping export.")
@@ -34,6 +33,7 @@ def export_to_sheets(rows, week_label, analytics_summary):
             for r in rows
         ],
         "summary": analytics_summary,
+        "report": weekly_report,
     }
 
     try:
@@ -281,6 +281,37 @@ def run_weekly():
     ]
     export_to_sheets(raw_rows, week_label, analytics_summary)
 
+
+    weekly_report = {
+        "week_start":            str(week_start),
+        "week_end":              str(week_end),
+        "unique_users":          int(unique_users or 0),
+        "total_success":         int(total_success or 0),
+        "total_failure":         int(total_failure or 0),
+        "success_rate":          float(success_rate or 0),
+        "failure_rate":          float(failure_rate or 0),
+        "unique_success_users":  int(unique_success_users or 0),
+        "unique_failed_users":   int(unique_failed_users or 0),
+        "user_engagement_rate":  float(user_engagement_rate or 0),
+        "avg_daily":             float(avg_daily or 0),
+        "median_logins":         float(median_logins or 0),
+        "p95_logins":            float(p95_logins or 0),
+        "most_active":           most_active,
+        "peak_day":              str(peak_day) if peak_day else "N/A",
+        "peak_hour":             peak_hour,
+        "peak_window":           peak_window,
+        "branch_max":            branch_max,
+        "top_3_users":           top_3_users,
+        "top_3_branches":        top_3_branches,
+        "top_10_users":          top_10_users,
+        "branch_distribution":   branch_distribution,
+        "daily_breakdown":       daily_breakdown,
+        "hourly_distribution":   hourly_distribution,
+        "exported_at":           datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    }
+
+    export_to_sheets(raw_rows, week_label, analytics_summary, weekly_report)
+
     print(f" Week {week_start} → {week_end}")
     print(f"   Users: {unique_users} | Logins: {total_success} | Failures: {total_failure}")
     print(f"   Success: {success_rate}% | Engagement: {user_engagement_rate}%")
@@ -289,3 +320,6 @@ def run_weekly():
 
 if __name__ == "__main__":
     run_weekly()
+
+
+
