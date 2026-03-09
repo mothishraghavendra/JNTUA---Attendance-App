@@ -1,6 +1,10 @@
 import os
 import uuid
-from flask_hot_reload import HotReload
+try:
+    from flask_hot_reload import HotReload
+    HOT_RELOAD_AVAILABLE = True
+except ImportError:
+    HOT_RELOAD_AVAILABLE = False
 from datetime import datetime, timedelta
 # from dotenv import load_dotenv
 import threading
@@ -24,7 +28,8 @@ from flask_mail import Mail, Message
 # load_dotenv() #not needed in production
 
 app = Flask(__name__)
-hot_reload = HotReload(app)
+if HOT_RELOAD_AVAILABLE:
+    hot_reload = HotReload(app)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "your-secret-key-here")
 
 app.config["SESSION_COOKIE_SECURE"] = False
@@ -302,7 +307,10 @@ def question_papers():
     # Load question papers data from JSON file
     papers = {}
     try:
-        with open("static/data/question_papers.json", "r") as f:
+        # Use absolute path based on this file's location (works on Vercel)
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        json_path = os.path.join(base_dir, "static", "data", "question_papers.json")
+        with open(json_path, "r") as f:
             papers = json.load(f)
     except Exception as e:
         print(f"Error loading question papers JSON: {e}")
@@ -424,7 +432,7 @@ def server_error(_):
 
 
 if __name__ == "__main__":
-    app.run(port=5001, debug=True)
+    app.run(port=5001, debug=False)
 
 
 ## Turn it for hot_loading 
