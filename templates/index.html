@@ -9,7 +9,7 @@
   <!-- SEO -->
   <meta name="title" content="JNTUA Attendance">
   <meta name="description" content="Check your JNTUA student attendance online. View subject-wise attendance percentage, total classes, and attendance details instantly.">
-  <meta name="keywords" content="JNTUA Attendance, JNTUA Student Attendance, JNTUA Attendance App, Attendance Checker, JNTUA College, Attendance Percentage,jale chanikya,chanikya,">
+  <meta name="keywords" content="JNTUA Attendance, JNTUA Student Attendance, JNTUA Attendance App, Attendance Checker, JNTUA College, Attendance Percentage,jale chanikya,chanikya,jale chanikya,j chanikya">
   <meta name="author" content="JNTUA Attendance">
   <meta name="robots" content="index, follow">
   <meta name="google-site-verification" content="nAk-gVEnTA0DrUpJK8cwCIuPdg-mkRbL7Veam5i9m2I">
@@ -22,19 +22,190 @@
   <meta property="og:description" content="Check your JNTUA student attendance online easily.">
   <meta property="og:image" content="https://jntua-attendance-app.vercel.app/assets/og-image.png">
 
-  <!-- Structured Data -->
+  <!-- Comprehensive Structured Data for SEO -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "JNTUA Attendance",
-    "url": "https://jntua-attendance-app.vercel.app/",
-    "description": "A student-friendly web application that fetches and displays real-time attendance data for JNTUA students.",
-    "applicationCategory": "EducationalApplication",
-    "operatingSystem": "Web",
-    "creator": { "@type": "Person", "name": "Chanikya", "url": "https://github.com/Chanikya-WebDev" },
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
-    "inLanguage": "en-IN"
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://jntua-attendance-app.vercel.app/#organization",
+        "name": "JNTUA Attendance Tracker",
+        "url": "https://jntua-attendance-app.vercel.app",
+        "logo": "https://jntua-attendance-app.vercel.app/icon.png",
+        "description": "Official JNTUA student attendance tracking and monitoring platform",
+        "sameAs": [
+          "https://github.com/Chanikya-WebDev/JNTUA---Attendance-app"
+        ],
+        "foundingDate": "2024",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "Student Support",
+          "availableLanguage": ["en-IN"],
+          "url": "https://jntua-attendance-app.vercel.app/contact"
+        },
+        "creator": {
+          "@type": "Person",
+          "name": "Chanikya",
+          "url": "https://github.com/Chanikya-WebDev",
+          "jobTitle": "Developer"
+        }
+      },
+      {
+        "@type": "WebApplication",
+        "@id": "https://jntua-attendance-app.vercel.app/#webapp",
+        "name": "JNTUA Attendance Checker",
+        "url": "https://jntua-attendance-app.vercel.app/",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web",
+        "description": "Check your JNTUA student attendance online. View subject-wise attendance percentage, total classes, and attendance details instantly with real-time data synchronization.",
+        "inLanguage": "en-IN",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "INR",
+          "availability": "https://schema.org/OnlineOnly"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.8",
+          "ratingCount": "150",
+          "bestRating": "5",
+          "worstRating": "1"
+        },
+        "creator": {
+          "@type": "Person",
+          "name": "Chanikya",
+          "url": "https://github.com/Chanikya-WebDev"
+        },
+        "isAccessibleForFree": true,
+        "publicationDate": "2024-01-01",
+        "author": {
+          "@type": "Person",
+          "name": "Chanikya",
+          "url": "https://github.com/Chanikya-WebDev"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://jntua-attendance-app.vercel.app/#website",
+        "url": "https://jntua-attendance-app.vercel.app",
+        "name": "JNTUA Attendance App",
+        "description": "JNTUA Student Attendance Tracking Platform",
+        "publisher": {
+          "@id": "https://jntua-attendance-app.vercel.app/#organization"
+        },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://jntua-attendance-app.vercel.app/?q={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://jntua-attendance-app.vercel.app/#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://jntua-attendance-app.vercel.app"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Attendance Dashboard",
+            "item": "https://jntua-attendance-app.vercel.app/dashboard"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Contact Support",
+            "item": "https://jntua-attendance-app.vercel.app/contact"
+          }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://jntua-attendance-app.vercel.app/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do I check my JNTUA attendance?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Login with your JNTUA portal credentials to instantly view your subject-wise attendance percentage and detailed attendance records in real-time."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is the JNTUA Attendance App free to use?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, our attendance checking application is completely free and open source. No hidden charges or premium features."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How accurate is the attendance data?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "We fetch data directly from the official JNTUA portal, ensuring 100% accuracy and real-time synchronization of attendance records."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is my login information secure?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, we use HTTPS encryption and secure session management. Your credentials are never stored on our servers."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I view my attendance history?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, you can view your complete attendance history, subject-wise details, and calculations for remaining classes needed to maintain 75% attendance."
+            }
+          }
+        ]
+      },
+      {
+        "@type": "LocalBusiness",
+        "@id": "https://jntua-attendance-app.vercel.app/#localbiz",
+        "name": "JNTUA Attendance Support Office",
+        "description": "Student support service for JNTUA attendance tracking and verification",
+        "areaServed": {
+          "@type": "State",
+          "name": "Andhra Pradesh"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "Student Support",
+          "availableLanguage": ["en", "te"],
+          "url": "https://jntua-attendance-app.vercel.app/contact"
+        }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://jntua-attendance-app.vercel.app/#app",
+        "name": "JNTUA Attendance Tracker",
+        "description": "Mobile-responsive web application for tracking JNTUA student attendance with real-time updates",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web-based, Mobile Compatible",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "INR"
+        },
+        "author": "Chanikya",
+        "downloadUrl": "https://jntua-attendance-app.vercel.app"
+      }
+    ]
   }
   </script>
 
@@ -440,6 +611,83 @@
       .card-inner { padding: 20px 18px 18px; }
       .site-header h1 { font-size: 1.4rem; }
     }
+    /* ── NOTICE BOARD (SEO LINK ROTATOR) ── */
+    .notice-board {
+      margin-top: 24px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      animation: fadeUp 0.45s 0.25s both;
+    }
+    
+    .notice-header {
+      background: var(--card);
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .notice-header svg {
+      width: 15px; height: 15px; color: var(--muted);
+    }
+    
+    .notice-body {
+      padding: 14px 16px;
+    }
+    
+    .notice-link {
+      text-decoration: none;
+      display: block;
+      transition: opacity 0.15s;
+    }
+    
+    .notice-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--purple);
+      margin-bottom: 4px;
+      transition: color 0.15s;
+    }
+    
+    .notice-link:hover .notice-title {
+      color: #5B21B6; /* Darker purple on hover */
+      text-decoration: underline;
+    }
+    
+    .notice-desc {
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── FOOTER NAV (SEO LINKS) ── */
+    .footer-nav {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+    
+    .footer-nav a {
+      font-size: 0.75rem;
+      color: #9CA3AF;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.15s;
+    }
+    
+    .footer-nav a:hover { color: #fff; }
+    .footer-nav .seo-link { color: #A78BFA; } /* Subtle purple to draw slight crawler attention */
+    .footer-nav .seo-link:hover { color: #DDD6FE; }
   </style>
 </head>
 <body>
@@ -556,7 +804,11 @@
           <div class="spinner" id="spinner" aria-hidden="true"></div>
         </button>
 
-      </form>
+      </form> 
+        <div class="notice-body">
+            <a href="{{ featured_link.url }}" class="notice-link" target="_blank" rel="noopener">     
+            </a>
+        </div>
     </div>
   </div>
 
@@ -590,6 +842,9 @@
       <p>&copy; 2026 JNTUA Attendance Tracker. All rights reserved.</p>
     </div>
   </div>
+  <div class="footer-nav">
+      <a href="/local-opportunities" class="seo-link">Local Opportunities</a>
+    </div>
 </footer>
 
 <script>

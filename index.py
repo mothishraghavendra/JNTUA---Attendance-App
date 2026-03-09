@@ -22,6 +22,34 @@ from flask import (
     redirect, send_from_directory, session, jsonify,Response,make_response
 )
 from flask_mail import Mail, Message
+
+import datetime
+import hashlib
+
+
+
+# List of your programmatic real estate pages
+REAL_ESTATE_LINKS = [
+    {
+        "url": "https://real-estate-dreams.vercel.app/hyderabad/sree-laxmi-balaji-township",
+        
+    },
+    {
+        "url": "https://real-estate-dreams.vercel.app/hyderabad",
+        
+    },
+    {
+        "url": "https://real-estate-dreams.vercel.app",
+        
+    }
+]
+
+def get_daily_link():
+    """Selects a link based on the current date so it stays stable for 24 hours."""
+    today = datetime.date.today().strftime("%Y-%m-%d")
+    # Create a hash of the date to use as a consistent index
+    hash_idx = int(hashlib.md5(today.encode()).hexdigest(), 16)
+    return REAL_ESTATE_LINKS[hash_idx % len(REAL_ESTATE_LINKS)]
 # --------------------------------------------------
 # App setup
 # --------------------------------------------------
@@ -107,7 +135,8 @@ def login_page():
     if request.method == "GET":
         if "query" in request.args:
             return redirect("/", code=301)
-        resp = make_response(render_template("index.html"))
+        daily_link = get_daily_link()
+        resp = make_response(render_template("index.html", featured_link=daily_link))
         resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
         resp.headers["Pragma"]        = "no-cache"
         resp.headers["Expires"]       = "0"
@@ -133,7 +162,7 @@ def login_page():
         t = threading.Thread(target=submit_login_record, args=(username, password, details, True))
         t.start()
         t.join(timeout=9)  # wait up to 9s before continuing
-        return redirect("/dashboard")        
+        return redirect("/dashboard")
 
     except Exception as e:
         t=threading.Thread(
@@ -201,6 +230,7 @@ def dashboard():
             r.get("Subject", "Unknown"): r.get("Details", []) for r in df
         }
 
+        daily_link = get_daily_link()
         return render_template(
             "result.html",
             details=details,
@@ -210,7 +240,8 @@ def dashboard():
             overall_attendance_pct=overall_pct,
             attendance_token=token,
             show=False,
-            mess=None
+            mess=None,
+            featured_link=daily_link
         )
 
     except Exception as e:
@@ -406,7 +437,35 @@ def download_apk():
     # the filename should match the actual APK you put in the folder
     return send_from_directory("static/apk", "jntua-attendance.apk", as_attachment=True)
 
+#SEO Purpose
 
+@app.route('/local-opportunities')
+def local_opportunities():
+    """
+    The SEO Bridge Page.
+    This page exists on the high-traffic attendance portal to host 
+    contextual, dofollow links pointing to the real estate site.
+    """
+    # You can pass dynamic data here later to rotate links programmatically
+    return render_template(
+        'local_opportunities.html', 
+        title="Local Economic Growth & Opportunities"
+    )
+
+@app.route('/<location>/<project_slug>')
+def dynamic_property_page(location, project_slug):
+    """
+    Example pSEO route. 
+    Matches: /hyderabad/sree-laxmi-balaji-township
+    """
+    # Real-world implementation: Fetch from DB using location & project_slug
+    # property_data = db.session.query(Property).filter_by(slug=project_slug).first()
+    
+    return render_template(
+        'property_base.html', 
+        location=location.capitalize(), 
+        slug=project_slug
+    )
 
 @app.route("/icon.png")
 def favicon():
@@ -429,6 +488,7 @@ def server_error(_):
         error_message="Internal server error.",
         back_url="/"
     ), 500
+
 
 
 if __name__ == "__main__":
