@@ -294,6 +294,56 @@ def contributors():
 def list_of_holidays():
     return render_template("list_of_holidays.html")
 
+@app.route("/qp")
+def question_papers():
+    import json
+    import re
+    
+    # Load question papers data from JSON file
+    papers = {}
+    try:
+        with open("static/data/question_papers.json", "r") as f:
+            papers = json.load(f)
+    except Exception as e:
+        print(f"Error loading question papers JSON: {e}")
+    
+    # Extract student info from session for auto-filtering
+    selected_branch = ""
+    selected_year = ""
+    selected_sem = ""
+    
+    username = session.get("user")
+    if username:
+        details = ACTIVE_SESSIONS.get(username + "_details", {})
+        classname = details.get("classname", "")
+        
+        if classname:
+            # Parse classname like "B.Tech (CSE) - III Yr - II Sem"
+            # Extract branch from parentheses
+            branch_match = re.search(r'\(([^)]+)\)', classname)
+            if branch_match:
+                selected_branch = branch_match.group(1).upper()
+            
+            # Extract year (Roman numerals)
+            roman_to_num = {"I": "1", "II": "2", "III": "3", "IV": "4"}
+            year_match = re.search(r'(\bI{1,3}V?\b|\bIV\b)\s*Yr', classname, re.IGNORECASE)
+            if year_match:
+                roman = year_match.group(1).upper()
+                selected_year = roman_to_num.get(roman, "")
+            
+            # Extract semester
+            sem_match = re.search(r'(\bI{1,2}\b)\s*Sem', classname, re.IGNORECASE)
+            if sem_match:
+                roman = sem_match.group(1).upper()
+                selected_sem = roman_to_num.get(roman, "")
+    
+    return render_template(
+        "question_papers.html",
+        papers=papers,
+        selected_branch=selected_branch,
+        selected_year=selected_year,
+        selected_sem=selected_sem
+    )
 @app.route("/api/attendance")
 def api_attendance():
     token = request.args.get("token")
