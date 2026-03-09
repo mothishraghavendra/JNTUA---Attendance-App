@@ -160,7 +160,7 @@ def get_subjects(session: requests.Session, student_info: dict) -> list:
         "classname": student_info.get("classname"),
         "acad_year": student_info.get("acad_year"),
     }
-
+    print(payload)
     res = session.post(BASE_URL + "studentsubjects.php", data=payload, timeout=15)
     if not res.text:
         return []
