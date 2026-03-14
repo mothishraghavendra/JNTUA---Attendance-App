@@ -414,12 +414,12 @@ def sitemap():
 
   <url>
     <loc>https://jntua-attendance-app.vercel.app/</loc>
-    <lastmod>2026-02-09</lastmod>
+    <lastmod>2026-03-14</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://jntua-attendance-app.vercel.app/contact</loc>
-    <lastmod>2026-02-09</lastmod>
+    <lastmod>2026-03-14</lastmod>
     <priority>0.8</priority>
   </url>
 </urlset>

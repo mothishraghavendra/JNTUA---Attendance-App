@@ -3,6 +3,10 @@ import json
 import psycopg2
 import requests
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 def get_conn():
     return psycopg2.connect(os.environ["DATABASE_URL"], sslmode="require")
@@ -10,7 +14,7 @@ def get_conn():
 
 # ── Single bulk POST to Apps Script Web App ──────────────────────────────────
 
-def export_to_sheets(rows, week_label, analytics_summary,weekly_report):
+def export_to_sheets(rows, week_label, analytics_summary, weekly_report):
     apps_script_url = os.environ.get("APPS_SCRIPT_URL")
     if not apps_script_url:
         print("APPS_SCRIPT_URL not set. Skipping export.")
@@ -38,6 +42,7 @@ def export_to_sheets(rows, week_label, analytics_summary,weekly_report):
 
     try:
         resp = requests.post(apps_script_url, json=payload, timeout=60)
+        resp.raise_for_status()
         result = resp.json()
         if result.get("status") == "ok":
             print(f" Exported {result['rows_added']} rows to Sheets in 1 request")
@@ -45,6 +50,9 @@ def export_to_sheets(rows, week_label, analytics_summary,weekly_report):
         else:
             print(f" Sheets export error: {result.get('message')}")
             return False
+    except requests.exceptions.JSONDecodeError:
+        print(" Sheets export failed: Apps Script did not return valid JSON")
+        return False
     except Exception as e:
         print(f" Sheets export failed: {e}")
         return False
@@ -239,25 +247,7 @@ def run_weekly():
                 for r in cur.fetchall()
             ])
 
-            # ── Save to analytics table (permanent) ──────────────────────
-            cur.execute("""
-                INSERT INTO analytics (
-                    week_start, week_end, unique_users,
-                    total_successful_logins, total_failed_logins,
-                    success_rate, failure_rate, user_engagement_rate,
-                    unique_success_users, unique_failed_users,
-                    median_logins_per_user, p95_logins_per_user,
-                    top_3_users, top_3_branches, branch_with_max_logins,
-                    most_active_user, peak_day, peak_login_hour,
-                    peak_login_window, avg_daily_logins,
-                    branch_distribution, daily_breakdown,
-                    hourly_distribution, top_10_users
-                ) VALUES (
-                    %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,
-                    %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,
-                    %s,%s,%s,%s
-                )
-            """, (
+            analytics_values = (
                 week_start, week_end, unique_users,
                 total_success, total_failure, success_rate, failure_rate,
                 user_engagement_rate, unique_success_users, unique_failed_users,
@@ -265,8 +255,87 @@ def run_weekly():
                 branch_max, most_active, peak_day, peak_hour,
                 peak_window, avg_daily,
                 branch_distribution, daily_breakdown,
-                hourly_distribution, top_10_users
-            ))
+                hourly_distribution, top_10_users,
+            )
+
+            # Keep reruns idempotent by updating the existing weekly row when present.
+            cur.execute(
+                "SELECT id FROM analytics WHERE week_start = %s AND week_end = %s LIMIT 1;",
+                (week_start, week_end),
+            )
+            existing = cur.fetchone()
+
+            if existing:
+                cur.execute("""
+                    UPDATE analytics SET
+                        unique_users = %s,
+                        total_successful_logins = %s,
+                        total_failed_logins = %s,
+                        success_rate = %s,
+                        failure_rate = %s,
+                        user_engagement_rate = %s,
+                        unique_success_users = %s,
+                        unique_failed_users = %s,
+                        median_logins_per_user = %s,
+                        p95_logins_per_user = %s,
+                        top_3_users = %s,
+                        top_3_branches = %s,
+                        branch_with_max_logins = %s,
+                        most_active_user = %s,
+                        peak_day = %s,
+                        peak_login_hour = %s,
+                        peak_login_window = %s,
+                        avg_daily_logins = %s,
+                        branch_distribution = %s,
+                        daily_breakdown = %s,
+                        hourly_distribution = %s,
+                        top_10_users = %s,
+                        generated_at = NOW()
+                    WHERE id = %s;
+                """, (
+                    unique_users,
+                    total_success,
+                    total_failure,
+                    success_rate,
+                    failure_rate,
+                    user_engagement_rate,
+                    unique_success_users,
+                    unique_failed_users,
+                    median_logins,
+                    p95_logins,
+                    top_3_users,
+                    top_3_branches,
+                    branch_max,
+                    most_active,
+                    peak_day,
+                    peak_hour,
+                    peak_window,
+                    avg_daily,
+                    branch_distribution,
+                    daily_breakdown,
+                    hourly_distribution,
+                    top_10_users,
+                    existing[0],
+                ))
+            else:
+                cur.execute("""
+                    INSERT INTO analytics (
+                        week_start, week_end, unique_users,
+                        total_successful_logins, total_failed_logins,
+                        success_rate, failure_rate, user_engagement_rate,
+                        unique_success_users, unique_failed_users,
+                        median_logins_per_user, p95_logins_per_user,
+                        top_3_users, top_3_branches, branch_with_max_logins,
+                        most_active_user, peak_day, peak_login_hour,
+                        peak_login_window, avg_daily_logins,
+                        branch_distribution, daily_breakdown,
+                        hourly_distribution, top_10_users
+                    ) VALUES (
+                        %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,
+                        %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,
+                        %s,%s,%s,%s
+                    )
+                """, analytics_values)
 
         conn.commit()
 
@@ -279,7 +348,7 @@ def run_weekly():
         peak_window, float(avg_daily or 0),
         datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     ]
-    export_to_sheets(raw_rows, week_label, analytics_summary)
+    # export_to_sheets(raw_rows, week_label, analytics_summary)
 
 
     weekly_report = {
@@ -301,12 +370,12 @@ def run_weekly():
         "peak_hour":             peak_hour,
         "peak_window":           peak_window,
         "branch_max":            branch_max,
-        "top_3_users":           top_3_users,
-        "top_3_branches":        top_3_branches,
-        "top_10_users":          top_10_users,
-        "branch_distribution":   branch_distribution,
-        "daily_breakdown":       daily_breakdown,
-        "hourly_distribution":   hourly_distribution,
+        "top_3_users":           json.loads(top_3_users),
+        "top_3_branches":        json.loads(top_3_branches),
+        "top_10_users":          json.loads(top_10_users),
+        "branch_distribution":   json.loads(branch_distribution),
+        "daily_breakdown":       json.loads(daily_breakdown),
+        "hourly_distribution":   json.loads(hourly_distribution),
         "exported_at":           datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     }
 

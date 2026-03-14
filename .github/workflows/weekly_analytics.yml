@@ -2,7 +2,8 @@ name: Weekly Login Analytics
 
 on:
   schedule:
-    - cron: '30 18 * * 6'
+    # Runs Sunday 00:00 UTC. Adjust if you need a local-time Sunday schedule.
+    - cron: '0 0 * * 0'
   workflow_dispatch:
 
 jobs:
@@ -16,10 +17,25 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install psycopg2-binary requests   
+        run: pip install -r requirements.txt
+
+      - name: Verify required secrets
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "ERROR: DATABASE_URL secret is not set"
+            exit 1
+          fi
+          if [ -z "$APPS_SCRIPT_URL" ]; then
+            echo "ERROR: APPS_SCRIPT_URL secret is not set"
+            exit 1
+          fi
+          echo "Required secrets are configured"
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          APPS_SCRIPT_URL: ${{ secrets.APPS_SCRIPT_URL }}
 
       - name: Run analytics pipeline
         run: python analytics_pipeline.py
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          APPS_SCRIPT_URL: ${{ secrets.APPS_SCRIPT_URL }}  
+          APPS_SCRIPT_URL: ${{ secrets.APPS_SCRIPT_URL }}
