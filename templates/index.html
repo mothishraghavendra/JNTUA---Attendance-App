@@ -546,6 +546,56 @@
     .tip-title { font-size: 0.75rem; font-weight: 700; color: #3B0764; margin-bottom: 2px; }
     .tip-text  { font-size: 0.71rem; color: #5B21B6; line-height: 1.55; }
 
+    /* ── SPONSOR CARD ── */
+    .sponsor-card {
+      margin-top: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 4px 14px rgba(17, 24, 39, 0.05);
+      transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+      animation: fadeUp 0.45s 0.18s both;
+    }
+
+    .sponsor-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(17, 24, 39, 0.08);
+      border-color: #D8DEE8;
+    }
+
+    .sponsor-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 2px;
+    }
+
+    .sponsor-text {
+      font-size: 0.72rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .sponsor-btn {
+      flex-shrink: 0;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      color: var(--purple);
+      border: 1px solid #DDD6FE;
+      background: #F5F3FF;
+      border-radius: 999px;
+      padding: 6px 10px;
+      white-space: nowrap;
+    }
+
     /* ── FOOTER ── */
     footer {
       background: var(--ink);
@@ -610,6 +660,10 @@
     @media (max-width: 480px) {
       .card-inner { padding: 20px 18px 18px; }
       .site-header h1 { font-size: 1.4rem; }
+      .sponsor-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
     }
     /* ── NOTICE BOARD (SEO LINK ROTATOR) ── */
     .notice-board {
@@ -811,6 +865,14 @@
         </div>
     </div>
   </div>
+
+  <a href="https://www.pixel2k26.in/" target="_blank" rel="noopener noreferrer" class="sponsor-card" aria-label="Sponsored by Pixel 2K26 - Visit Website">
+    <div>
+      <div class="sponsor-title">Sponsored by Pixel 2K26</div>
+      <div class="sponsor-text">A Fest of Innovation, Creativity & Competition</div>
+    </div>
+    <span class="sponsor-btn">Visit Website</span>
+  </a>
 
   <!-- TIP -->
   
